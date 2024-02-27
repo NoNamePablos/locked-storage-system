@@ -2,12 +2,23 @@ import { defineNuxtConfig } from 'nuxt/config'
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['@ant-design-vue/nuxt', '@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxtjs/tailwindcss', '@ant-design-vue/nuxt'],
+  ssr: false,
   postcss: {
     plugins: {
       tailwindcss: {},
       autoprefixer: {}
     }
   },
-  css: ['~/assets/css/main.css']
+  css: ['ant-design-vue/dist/reset.css', '~/assets/css/main.css'],
+  vite: {
+    resolve: {
+      alias: {
+        'ant-design-vue/dist': 'ant-design-vue/dist',
+        'ant-design-vue/es': 'ant-design-vue/es',
+        'ant-design-vue/lib': 'ant-design-vue/es',
+        'ant-design-vue': 'ant-design-vue/es'
+      }
+    }
+  }
 })

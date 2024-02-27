@@ -12,13 +12,15 @@
     email: string
     password: string
     repeatPassword: string
+    role: 'user' | 'company'
   }
 
   const formState = reactive<FormState>({
     username: '',
     email: '',
     password: '',
-    repeatPassword: ''
+    repeatPassword: '',
+    role: 'user'
   })
   const onFinish = (values: any) => {
     console.log('success', values)
@@ -40,11 +42,17 @@
           @finish-failed="onFinishFailed($event)"
         >
           <a-typography-title class="py-10" :level="2">Зарегистрироваться</a-typography-title>
+          <a-form-item name="role" size="large">
+            <a-radio-group v-model:value="formState.role" class="w-full flex" button-style="solid">
+              <a-radio-button value="user" class="w-full text-center">Пользователь</a-radio-button>
+              <a-radio-button value="company" class="w-full text-center">Компания</a-radio-button>
+            </a-radio-group>
+          </a-form-item>
           <a-form-item
             name="username"
             :rules="[{ required: true, message: 'Please input your username!' }]"
           >
-            <a-input v-model:value="formState.username" placeholder="Username">
+            <a-input v-model:value="formState.username" placeholder="Имя пользователя">
               <template #prefix>
                 <user-outlined />
               </template>
@@ -64,7 +72,7 @@
             name="password"
             :rules="[{ required: true, message: 'Please input your password!' }]"
           >
-            <a-input-password v-model:value="formState.password" placeholder="Password">
+            <a-input-password v-model:value="formState.password" placeholder="Пароль">
               <template #prefix>
                 <lock-outlined />
               </template>
@@ -84,10 +92,7 @@
               }
             ]"
           >
-            <a-input-password
-              v-model:value="formState.repeatPassword"
-              placeholder="Repeat Password"
-            >
+            <a-input-password v-model:value="formState.repeatPassword" placeholder="Повтори пароль">
               <template #prefix>
                 <lock-outlined />
               </template>
