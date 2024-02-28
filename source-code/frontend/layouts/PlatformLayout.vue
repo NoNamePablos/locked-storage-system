@@ -30,7 +30,7 @@
 </script>
 
 <template>
-  <a-layout class="h-screen">
+  <a-layout class="h-full">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible theme="light">
       <div class="h-[48px] p-2 flex justify-between">
         <nuxt-link to="/platform" class="text-black">
@@ -51,8 +51,10 @@
           @click="() => (collapsed = !collapsed)"
         />
       </div>
-      <div class="pt-4 border-solid border-transparent border-t-gray-200 border-0 border-t-[1px]">
-        <a-menu v-model:selectedKeys="selectedKeys" mode="inline">
+      <div
+        class="pt-4 border-solid border-transparent border-t-gray-200 border-0 border-t-[1px] h-full border-r-[1px] border-r-gray-200"
+      >
+        <a-menu v-model:selectedKeys="selectedKeys" mode="inline" style="border: none">
           <a-menu-item key="1">
             <database-outlined />
             <span>Пространство</span>
@@ -116,7 +118,9 @@
         </div>
       </header>
       <a-layout-content>
-        <div class="p-8">
+        <div
+          class="bg-white h-full border-solid border-transparent border-t-gray-200 border-0 border-t-[1px]"
+        >
           <slot />
         </div>
       </a-layout-content>
