@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { useAttrs, reactive, onUpdated } from 'vue'
+  import { useAttrs, reactive, onUpdated, ref } from 'vue'
   import BaseModal from '~/components/Base/BaseModal.vue'
 
   const attrs = useAttrs()
