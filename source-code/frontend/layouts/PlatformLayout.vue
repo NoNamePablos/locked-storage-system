@@ -1,7 +1,15 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { ref, watch, h } from 'vue'
   import { Logo } from '~/components/image-components'
-  import { RightOutlined, LeftOutlined } from '@ant-design/icons-vue'
+  import {
+    RightOutlined,
+    LeftOutlined,
+    UserOutlined,
+    DatabaseOutlined,
+    ExperimentOutlined
+  } from '@ant-design/icons-vue'
+  import { RoutesNames } from '~/services/constants/routesNames'
+  import { PermissionsType } from '~/services/constants/PermissionsType'
 
   const collapsed = ref<boolean>(false)
   const selectedKeys = ref<string[]>(['1'])
@@ -17,6 +25,27 @@
     {
       value: 'en',
       icon: '🇬🇧'
+    }
+  ])
+
+  const platrformNav = ref([
+    {
+      to: RoutesNames.WORKSPACE_COMPANY,
+      title: 'Компания',
+      permission: PermissionsType.ALL,
+      icon: h(DatabaseOutlined)
+    },
+    {
+      to: RoutesNames.WORKSPACE_USERS,
+      title: 'Пользователи',
+      permission: PermissionsType.ALL,
+      icon: h(UserOutlined)
+    },
+    {
+      to: RoutesNames.WORKSPACE_PERSONAL,
+      title: 'Мое пространство',
+      permission: PermissionsType.ALL,
+      icon: h(ExperimentOutlined)
     }
   ])
 
@@ -54,14 +83,12 @@
       <div
         class="pt-4 border-solid border-transparent border-t-gray-200 border-0 border-t-[1px] h-full border-r-[1px] border-r-gray-200"
       >
-        <a-menu v-model:selectedKeys="selectedKeys" mode="inline" style="border: none">
-          <a-menu-item key="1">
-            <database-outlined />
-            <span>Пространство</span>
-          </a-menu-item>
-          <a-menu-item key="2">
-            <user-outlined />
-            <span>Пользователи</span>
+        <a-menu mode="inline" style="border: none">
+          <a-menu-item v-for="(nav, idx) in platrformNav" :key="idx">
+            <nuxt-link :to="nav.to">
+              <component :is="nav.icon" />
+              <span>{{ nav.title }}</span>
+            </nuxt-link>
           </a-menu-item>
         </a-menu>
       </div>
@@ -86,10 +113,12 @@
           <div>{{ typeOfAccount }}</div>
           <a-popover v-model:open="visible" trigger="click">
             <template #content>
-              <a-menu style="border: none">
+              <a-menu style="border: none" :selectable="false">
                 <a-menu-item key="1">
-                  <user-outlined />
-                  <span>Настройки</span>
+                  <nuxt-link :to="RoutesNames.SETTINGS">
+                    <user-outlined />
+                    <span>Настройки</span>
+                  </nuxt-link>
                 </a-menu-item>
                 <a-menu-item key="3">
                   <login-outlined />
