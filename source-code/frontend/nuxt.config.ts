@@ -11,6 +11,12 @@ export default defineNuxtConfig({
     }
   },
   css: ['ant-design-vue/dist/reset.css', '~/assets/css/main.css'],
+  runtimeConfig: {
+    public: {
+      apiUrl: 'http://127.0.0.1:8000',
+      authTokenKey: 'JWT_SECRET'
+    }
+  },
   vite: {
     resolve: {
       alias: {
