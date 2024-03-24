@@ -9,7 +9,8 @@
   import UsersModalCluster from '~/components/Cluster/UsersModalCluster.vue'
 
   definePageMeta({
-    layout: 'platform-layout'
+    layout: 'platform-layout',
+    middleware: ['auth']
   })
 
   const clasterSearch = ref<string>('')

@@ -1,26 +1,32 @@
 import { defineStore } from 'pinia'
-import personalRepository from '~/services/repository/personalRepository'
-import config from '~/services/utils/config'
+import personalRepository from '@/services/repository/personalRepository.ts'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     isAuth: false,
-    authTokenKey: config.authTokenKey,
-    user: null,
-    refreshTimerId: null,
-    refreshDelayMinutes: 30
+    authTokenKey: 'JWT_SECRET',
+    user: null
   }),
   actions: {
+    async profile() {
+      try {
+        const response = await personalRepository.profile()
+        console.log(response)
+        this.user = response
+        if (this.user) {
+          this.isAuth = true
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
     async refresh() {
       try {
         const response = await personalRepository.refresh()
         const { data } = response
-        const newToken = data.token.original.access_token
+        const newToken = data.original.access_token
         localStorage.setItem(this.authTokenKey, newToken)
         this.isAuth = true
-        if (this.refreshTimerId === null) {
-          this.startRefreshInterval()
-        }
       } catch (e) {
         console.log(e)
       }
@@ -28,33 +34,41 @@ export const useAuthStore = defineStore('auth', {
     async login(params) {
       const response = await personalRepository.login(params)
       const { data } = response
-      const newToken = data.token.original.access_token
+      const newToken = data.access_token
       localStorage.setItem(this.authTokenKey, newToken)
       this.isAuth = true
-      this.startRefreshInterval()
+      await this.profile()
+    },
+    removeToken() {
+      localStorage.removeItem(this.authTokenKey)
+      localStorage.removeItem('auth')
+      this.isAuth = false
+      this.user = null
     },
     logout() {
       this.removeToken()
     },
-    removeToken() {
-      localStorage.removeItem(this.authTokenKey)
-      this.isAuth = false
-      this.stopRefreshInterval()
-    },
-    startRefreshInterval() {
-      this.refreshTimerId = setInterval(this.refresh, 1000 * 60 * this.refreshDelayMinutes)
-    },
-    stopRefreshInterval() {
-      clearInterval(this.refreshTimerId)
-      this.refreshTimerId = null
-    },
     async register(params) {
       const response = await personalRepository.register(params)
       const { data } = response
+      console.log(data)
       const newToken = data.token.original.access_token
       localStorage.setItem(this.authTokenKey, newToken)
       this.isAuth = true
-      this.startRefreshInterval()
+    },
+    getToken() {
+      const token = localStorage.getItem(this.authTokenKey)
+      if (!token) {
+        this.removeToken()
+        return null
+      }
+      return token
     }
-  }
+  },
+  getters: {
+    isLoginIn(state) {
+      return state.isAuth
+    }
+  },
+  persist: true
 })

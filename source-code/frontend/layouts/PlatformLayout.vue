@@ -6,10 +6,19 @@
     LeftOutlined,
     UserOutlined,
     DatabaseOutlined,
-    ExperimentOutlined
+    ExperimentOutlined,
+    ExclamationCircleOutlined
   } from '@ant-design/icons-vue'
   import { RoutesNames } from '~/services/constants/routesNames'
   import { PermissionsType } from '~/services/constants/PermissionsType'
+  import { useAuthStore } from '~/stores/auth'
+  import { storeToRefs, useRouter } from '#imports'
+  import { Modal } from '#imports'
+
+  const router = useRouter()
+
+  const authStore = useAuthStore()
+  const { user } = storeToRefs(authStore)
 
   const collapsed = ref<boolean>(false)
   const selectedKeys = ref<string[]>(['1'])
@@ -50,8 +59,21 @@
   ])
 
   const typeOfAccount = ref('Компания')
-  const userAvatar = ref('https://www.antdv.com/assets/logo.1ef800a8.svg')
-  const userEmail = ref('user22@mail.ru')
+
+  console.log(user.value)
+
+  const logout = () => {
+    console.log('clicked')
+    Modal.confirm({
+      title: 'Do you Want to delete these items?',
+      icon: h(ExclamationCircleOutlined),
+      onOk() {
+        authStore.logout()
+        router.push('/login')
+      },
+      onCancel() {}
+    })
+  }
 
   watch(value, val => {
     console.log(`selected:`, val)
@@ -110,7 +132,7 @@
           </div>
         </div>
         <div class="flex gap-8 items-center">
-          <div>{{ typeOfAccount }}</div>
+          <div v-if="user?.companyId">{{ typeOfAccount }}</div>
           <a-popover v-model:open="visible" trigger="click">
             <template #content>
               <a-menu style="border: none" :selectable="false">
@@ -121,19 +143,21 @@
                   </nuxt-link>
                 </a-menu-item>
                 <a-menu-item key="3">
-                  <login-outlined />
-                  <span>Выход</span>
+                  <div class="flex" @click="logout">
+                    <login-outlined />
+                    <span>Выход</span>
+                  </div>
                 </a-menu-item>
               </a-menu>
             </template>
             <div class="flex items-center gap-2 hover:bg-gray-200 px-2 py-1 rounded-lg">
-              <a-avatar v-if="!userAvatar" style="background-color: #87d068">
+              <a-avatar v-if="!user?.avatar" style="background-color: #87d068">
                 <template #icon>
                   <UserOutlined />
                 </template>
               </a-avatar>
               <a-avatar v-else :src="userAvatar" />
-              <div>{{ userEmail }}</div>
+              <div>{{ user?.email }}</div>
               <div class="transition-all">
                 <UpOutlined
                   :class="[

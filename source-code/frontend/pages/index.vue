@@ -2,6 +2,7 @@
   import AuthHeader from '~/components/AuthLayout/AuthHeader.vue'
   import gsap from 'gsap'
   import { ScrollTrigger } from 'gsap/ScrollTrigger'
+  import { definePageMeta } from '#imports'
 
   gsap.registerPlugin(ScrollTrigger)
 

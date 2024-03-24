@@ -13,9 +13,21 @@ const personalRepository = {
     const { $http } = useNuxtApp()
     return $http.post('/api/auth/refresh')
   },
-  profile: () => {
+  profile: async () => {
     const { $http } = useNuxtApp()
-    return $http.post('/api/auth/me')
+    const response = await $http.post('/api/auth/me')
+
+    return {
+      avatar: response.data.avatar,
+      companyId: response.data.company_id,
+      companyRoleId: response.data.company_role_id,
+      email: response.data.email,
+      emailVerifiedAd: response.data.email_verified_ad,
+      id: response.data.id,
+      name: response.data.name,
+      role: response.data.role,
+      updatedAt: response.data.updated_at
+    }
   }
 }
 export default personalRepository

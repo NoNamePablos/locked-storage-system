@@ -1,11 +1,17 @@
 <script setup lang="ts">
-  import { definePageMeta } from '#imports'
+  import { definePageMeta, notification, useNuxtApp, useRouter } from '#imports'
   import { reactive } from 'vue'
+  import { handleError } from '~/services/utils/handleError'
+  import { RoutesNames } from '~/services/constants/routesNames'
+  import { useAuthStore } from '~/stores/auth'
 
   definePageMeta({
     layout: 'auth-layout',
-    key: 'register'
+    middleware: ['auth']
   })
+
+  const router = useRouter()
+  const authStore = useAuthStore()
 
   interface FormState {
     email: string
@@ -18,11 +24,27 @@
     password: '',
     remember: true
   })
-  const onFinish = (values: any) => {
-    console.log('success', values)
-  }
-  const onFinishFailed = (errorInfo: any) => {
-    console.log('Failed', errorInfo)
+  const onFinish = async (values: any) => {
+    try {
+      console.log('success', values)
+      await authStore.login(values)
+
+      if (authStore.isAuth) {
+        await authStore.profile()
+        await router.push(RoutesNames.PLATFORM)
+        notification.success({
+          message: 'Удачная авторизация',
+          description: 'Вы успещно вошли в систему.'
+        })
+      }
+    } catch (error) {
+      handleError(error)
+      notification.error({
+        message: 'Notification Title',
+        description:
+          'This is the content of the notification. This is the content of the notification. This is the content of the notification.'
+      })
+    }
   }
 </script>
 
@@ -30,13 +52,7 @@
   <a-row class="w-full" :gutter="[32, 8]" align="center">
     <a-col :span="8">
       <div class="rounded-lg shadow-lg bg-white">
-        <a-form
-          :model="formState"
-          autocomplete="off"
-          class="px-12"
-          @finish="onFinish($event)"
-          @finish-failed="onFinishFailed($event)"
-        >
+        <a-form :model="formState" autocomplete="off" class="px-12" @finish="onFinish($event)">
           <a-typography-title class="py-10" :level="2">Войти</a-typography-title>
           <a-form-item
             name="email"

@@ -1,11 +1,14 @@
 <script setup lang="ts">
-  import { definePageMeta } from '#imports'
+  import { definePageMeta, notification, useAuthStore, useRouter } from '#imports'
   import { reactive } from 'vue'
+  import { RoutesNames } from '~/services/constants/routesNames'
+  import { handleError } from '~/services/utils/handleError'
 
   definePageMeta({
-    layout: 'auth-layout',
-    key: 'login'
+    layout: 'auth-layout'
   })
+  const authStore = useAuthStore()
+  const router = useRouter()
 
   interface FormState {
     username: string
@@ -22,8 +25,34 @@
     repeatPassword: '',
     role: 'user'
   })
-  const onFinish = (values: any) => {
-    console.log('success', values)
+  const onFinish = async (values: any) => {
+    try {
+      console.log('success', values)
+      const transformData = {
+        name: values.username,
+        email: values.email,
+        password: values.password,
+        confirm_password: values.repeatPassword,
+        role: values.role
+      }
+      await authStore.register(transformData)
+
+      if (authStore.isAuth) {
+        await authStore.profile()
+        await router.push(RoutesNames.PLATFORM_COMPANY)
+        notification.success({
+          message: 'Удачная авторизация',
+          description: 'Вы успещно вошли в систему.'
+        })
+      }
+    } catch (error) {
+      handleError(error)
+      notification.error({
+        message: 'Notification Title',
+        description:
+          'This is the content of the notification. This is the content of the notification. This is the content of the notification.'
+      })
+    }
   }
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed', errorInfo)
