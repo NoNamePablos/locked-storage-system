@@ -4,62 +4,71 @@
   import { ref } from 'vue'
   import { mockRecords } from '~/mock/records'
   import Empty from '~/components/Empty/Empty.vue'
+  import RecordsHeader from '~/components/Records/RecordsHeader.vue'
+  import BackButton from '~/components/ui/BackButton.vue'
+  import { useTypeOfView } from '~/services/composables'
+  import { StorageKeys } from '~/services/constants/StorageKeys'
+  import type { IRecordItem } from '~/services/models'
+  import TypeView from '~/components/TypeView/TypeView.vue'
 
   definePageMeta({
     layout: 'platform-layout'
   })
 
-  const route = useRoute()
-  console.log('fdfd', route.params) // { id: '123' }
+  const { typeOfView, changeTypeOfView } = useTypeOfView(StorageKeys.RECORDS_TYPE)
 
-  const clasterSearch = ref<string>('')
-  const onSearch = (searchValue: string) => {
-    console.log('use value', searchValue)
-    console.log('or use this.value', clasterSearch.value)
+  const recordsList = ref<IRecordItem[]>()
+  const isLoading = ref(false)
+
+  const fetchRecords = () => {
+    isLoading.value = true
+    try {
+      setTimeout(() => {
+        recordsList.value = mockRecords
+        isLoading.value = false
+      }, 400)
+    } catch (e) {
+      console.log(e)
+    }
   }
+  onMounted(() => {
+    fetchRecords()
+  })
 
-  const isEmpty = ref(false)
+  const openModal = ref<boolean>(false)
+
+  const close = () => {
+    openModal.value = false
+  }
+  const open = () => {
+    openModal.value = true
+  }
 </script>
 
 <template>
   <div class="h-full">
-    <platform-header title="Записи кластера" />
+    <back-button class="mt-4" name="Кластеры" route="/platform/records" />
+    <platform-header title="Записи кластера">
+      <template #right>
+        <a-button type="primary" size="middle" :icon="h(PlusOutlined)" @click="open()"
+          >Добавить пароль</a-button
+        >
+      </template>
+    </platform-header>
     <a-layout class="bg-white h-full">
-      <div
-        class="mt-4 pb-6 px-4 flex w-full items-center flex-wrap justify-between border-solid border-transparent border-b-gray-200 border-0 border-b-[1px]"
-      >
-        <div class="max-w-[400px] mt-4 w-full">
-          <a-input-search
-            v-model:value="clasterSearch"
-            placeholder="Введите название кластера"
-            size="large"
-            @search="onSearch($event)"
-          />
-        </div>
-        <div>
-          <a-button type="dashed" size="large" :icon="h(PlusOutlined)">Добавить запись</a-button>
-        </div>
-      </div>
+      <records-header :type-view="typeOfView" @change-view="changeTypeOfView($event)" />
       <a-layout-content class="mt-6 px-4">
-        <empty v-if="isEmpty" title="Сейчас кластеры пусты ( " button-title="Добавить кластер" />
-        <span>Cluster ID: {{ route.params.id }}</span>
-        <a-flex wrap="wrap" gap="middle">
-          <div v-for="cluster in mockRecords" :key="cluster.id">
-            <a-card hoverable style="width: 200px">
-              <a-card-meta :title="cluster.service_name" />
-              <template #actions>
-                <plus-outlined />
-                <EditOutlined />
-                <div class="text-red-600">
-                  <delete-outlined />
-                </div>
-              </template>
-            </a-card>
-          </div>
-        </a-flex>
+        <empty
+          v-if="recordsList && recordsList.length === 0"
+          title="Сейчас кластеры пусты"
+          button-title="Добавить кластер"
+        />
+        <a-skeleton v-if="isLoading" />
+        <type-view v-else :items="recordsList" :type-view="typeOfView" @add="open()" />
       </a-layout-content>
     </a-layout>
   </div>
+  <records-modal :open="openModal" @close="close()" />
 </template>
 
 <style scoped></style>

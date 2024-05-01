@@ -1,79 +1,23 @@
 <script setup lang="ts">
   import AuthHeader from '~/components/AuthLayout/AuthHeader.vue'
-  import gsap from 'gsap'
-  import { ScrollTrigger } from 'gsap/ScrollTrigger'
-  import { definePageMeta } from '#imports'
-
-  gsap.registerPlugin(ScrollTrigger)
-
-  const main = ref(null)
-  let tl
-  let ctx
-
-  onMounted(() => {
-    ctx = gsap.context(self => {
-      const titles = self.selector('.title-animation')
-      const descrs = self.selector('.description-animation')
-      const buttons = self.selector('.button-animation')
-      titles.forEach(title => {
-        gsap.from(
-          title,
-          {
-            letterSpacing: '10px',
-            opacity: 0,
-            x: 300,
-            skewX: 65,
-            scrollTrigger: title
-          },
-          {
-            letterSpacing: '0',
-            opacity: 1,
-            x: 0,
-            skewX: 0,
-            duration: 1,
-            delay: 0.5,
-            scrollTrigger: title
-          }
-        )
-      })
-      descrs.forEach(p => {
-        gsap.fromTo(
-          p,
-          {
-            opacity: 0,
-            x: 150,
-            skewX: 30
-          },
-          {
-            opacity: 1,
-            x: 0,
-            skewX: 0,
-            duration: 1,
-            delay: 0.5,
-            scrollTrigger: p
-          }
-        )
-      })
-      buttons.forEach(button => {
-        gsap.fromTo(
-          button,
-          {
-            opacity: 0
-          },
-          {
-            opacity: 1,
-            duration: 1,
-            delay: 1,
-            scrollTrigger: button
-          }
-        )
-      })
-    }, main.value)
-  })
+  import MainHeaderSection from '~/components/pages/Main/MainHeaderSection.vue'
+  import MainFeaturesSection from '~/components/pages/Main/MainFeaturesSection.vue'
+  import MainChooseSection from '~/components/pages/Main/MainChooseSection.vue'
 </script>
 
 <template>
-  <section ref="main" class="bg-gray-900 overflow-hidden">
+  <auth-header
+    login
+    register
+    tooltip-color="geekblue"
+    class="h-[54px] py-2 transition-opacity opacity-100 bg-white block border-transparent border-b border-b-gray-300 border-solid"
+  />
+
+  <main-header-section />
+  <main-features-section />
+  <main-choose-section />
+
+  <!--  <section ref="main" class="bg-gray-900 overflow-hidden">
     <auth-header
       login
       register
@@ -135,7 +79,7 @@
       </div>
       <div class="h-screen bg-red-300">fsdafsdf</div>
     </div>
-  </section>
+  </section>-->
 </template>
 
 <style scoped></style>

@@ -1,32 +1,32 @@
-import type { IRecord } from '~/services/models'
+import type { IRecordItem } from '~/services/models'
 
-export const mockRecords: IRecord[] = [
-  {
-    id: 1,
-    email: 'teststs@test.ru',
-    password: 'fdsfasdfsfasd',
-    login: 'sdfasdf',
-    service_name: 'vk.com'
-  },
-  {
-    id: 2,
-    email: 'testsd11sts@test.ru',
-    password: 'fdsfasdfsfasd',
-    login: 'sdfasdf',
-    service_name: 'tg.com'
-  },
+export const mockRecords: IRecordItem[] = [
   {
     id: 3,
-    email: 'testsdfsats@test.ru',
-    password: 'fdsfasdfsfasd',
-    login: 'sdfasdf',
-    service_name: 'inst.com'
+    email: '123@123',
+    login: 'admin@admin.com',
+    password: '06062001',
+    site: 'meta.com'
   },
   {
     id: 4,
-    email: 'test113dwsts@test.ru',
-    password: 'fdsfasdfsfasd',
-    login: 'sdfasdf',
-    service_name: 'inst2.com'
+    email: '1231123@12323123',
+    login: 'admin@admin.com',
+    password: '06062001',
+    site: 'instagram.com'
+  },
+  {
+    id: 6,
+    email: '123123123123@123123123123',
+    login: 'admin@admin.com',
+    password: '06062001',
+    site: 'trello.com'
+  },
+  {
+    id: 7,
+    email: '123123123123@123123123123',
+    login: 'admin@admin.com',
+    password: '06062001',
+    site: 'jira.com'
   }
 ]

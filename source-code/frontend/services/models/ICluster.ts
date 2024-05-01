@@ -3,10 +3,10 @@ export interface ICluster {
   name: string
   created: string
 }
-export interface IRecord {
+export interface IRecordItem {
   id: number
-  service_name: string
   email: string
   login: string
   password: string
+  site: string
 }
