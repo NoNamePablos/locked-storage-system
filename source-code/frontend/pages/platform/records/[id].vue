@@ -2,7 +2,7 @@
   import { definePageMeta } from '#imports'
   import { PlusOutlined } from '@ant-design/icons-vue'
   import { ref } from 'vue'
-  import { mockRecords } from '~/mock/records'
+  import { mockRecordById, mockRecords } from '~/mock/records'
   import Empty from '~/components/Empty/Empty.vue'
   import RecordsHeader from '~/components/Records/RecordsHeader.vue'
   import BackButton from '~/components/ui/BackButton.vue'
@@ -19,6 +19,9 @@
 
   const recordsList = ref<IRecordItem[]>()
   const isLoading = ref(false)
+  const isLoadingRecord = ref(false)
+  const isEditingRecord = ref(false)
+  const recordEditItem = ref<IRecordItem | null>()
 
   const fetchRecords = () => {
     isLoading.value = true
@@ -31,6 +34,20 @@
       console.log(e)
     }
   }
+
+  const fetchRecordsById = () => {
+    isLoadingRecord.value = true
+    try {
+      setTimeout(() => {
+        recordEditItem.value = mockRecordById
+        console.log(recordEditItem.value)
+        isLoadingRecord.value = false
+      }, 400)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   onMounted(() => {
     fetchRecords()
   })
@@ -39,9 +56,16 @@
 
   const close = () => {
     openModal.value = false
+    isEditingRecord.value = false
+    recordEditItem.value = null
   }
   const open = () => {
     openModal.value = true
+  }
+  const openWithEditing = () => {
+    openModal.value = true
+    isEditingRecord.value = true
+    fetchRecordsById()
   }
 </script>
 
@@ -64,11 +88,23 @@
           button-title="Добавить кластер"
         />
         <a-skeleton v-if="isLoading" />
-        <type-view v-else :items="recordsList" :type-view="typeOfView" @add="open()" />
+        <type-view
+          v-else
+          :items="recordsList"
+          :type-view="typeOfView"
+          @edit="openWithEditing()"
+          @add="open()"
+        />
       </a-layout-content>
     </a-layout>
   </div>
-  <records-modal :open="openModal" @close="close()" />
+  <records-modal
+    :is-editing="isEditingRecord"
+    :is-loading="isLoadingRecord"
+    :item="recordEditItem"
+    :open="openModal"
+    @close="close()"
+  />
 </template>
 
 <style scoped></style>

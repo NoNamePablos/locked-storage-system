@@ -30,3 +30,10 @@ export const mockRecords: IRecordItem[] = [
     site: 'jira.com'
   }
 ]
+export const mockRecordById: IRecordItem = {
+  title: 'Jira',
+  id: 7,
+  login: 'admin@admin.com',
+  password: '06062001',
+  site: 'jira.com'
+}

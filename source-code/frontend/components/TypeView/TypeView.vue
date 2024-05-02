@@ -27,6 +27,7 @@
 
   const emits = defineEmits<{
     (e: 'add'): void
+    (e: 'edit'): void
   }>()
 
   const getFavicon = url => {
@@ -36,7 +37,7 @@
 
 <template>
   <div :class="['mb-4', computedClasses]">
-    <div v-for="cluster in itemsList" :key="cluster.id">
+    <div v-for="cluster in itemsList" :key="cluster.id" @click="emits('edit')">
       <div
         class="p-4 rounded border border-solid border-gray-400 flex items-center gap-4 hover:shadow transition-all cursor-pointer"
       >

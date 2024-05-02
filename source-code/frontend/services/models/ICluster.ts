@@ -9,4 +9,5 @@ export interface IRecordItem {
   login: string
   password: string
   site: string
+  title?: string
 }

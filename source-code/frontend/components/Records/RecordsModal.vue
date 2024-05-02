@@ -1,15 +1,27 @@
 <script setup lang="ts">
   import { ref, toRefs, reactive, watch } from 'vue'
   import { Home, Globe, User, LockKeyhole, Info } from 'lucide-vue-next'
+  import LeakPasswordForm from '~/components/Forms/LeakPasswordForm.vue'
+  import type { IRecordItem } from '~/services/models'
+  import { useClipboard, usePermission } from '@vueuse/core'
 
   const loading = ref<boolean>(false)
 
   interface IProps {
     open: boolean
+    isEditing?: boolean
+    isLoading?: boolean
+    item?: IRecordItem | unknown
   }
 
-  const props = defineProps<IProps>()
-  const { open } = toRefs(props)
+  const props = withDefaults(defineProps<IProps>(), {
+    isEditing: false,
+    isLoading: false,
+    item: () => ({})
+  })
+
+  const { text, isSupported, copy } = useClipboard()
+  const { open, isEditing, isLoading, item } = toRefs(props)
 
   const emits = defineEmits<{
     (e: 'close'): void
@@ -36,6 +48,8 @@
     password: string
   }
   const modal = ref(null)
+  const leaksFormRef = ref(null)
+
   const formState = reactive<FormState>({
     title: '',
     site: '',
@@ -44,23 +58,87 @@
   })
 
   watch(
+    () => item.value,
+    newValue => {
+      console.log(newValue)
+      if (isEditing.value && newValue) {
+        formState.title = newValue?.title ?? ''
+        formState.site = newValue?.site ?? ''
+        formState.login = newValue?.login ?? ''
+        formState.password = newValue?.password ?? ''
+      }
+    },
+    {
+      immediate: true
+    }
+  )
+
+  watch(
     () => open.value,
     newVal => {
+      if (newVal) {
+        formState.title = ''
+        formState.site = ''
+        formState.login = ''
+        formState.password = ''
+      }
       if (!newVal) {
         modal.value.resetFields()
+        if (isCheckLeaksPassword.value) {
+          leaksFormRef.value.resetForm()
+          isCheckLeaksPassword.value = false
+        }
       }
     }
   )
+
+  const isCheckLeaksPassword = ref(false)
+  const toggleLeaksPassword = () => {
+    isCheckLeaksPassword.value = !isCheckLeaksPassword.value
+  }
+
+  const copyText = data => {
+    try {
+      copy(data)
+      message.success('Данные скопированы')
+    } catch (e) {
+      message.error('Ошибка копирования')
+    }
+  }
 </script>
 
 <template>
-  <a-modal :open="open" title="Добавление пароля" @cancel="handleCancel" @ok="handleOk">
+  <a-modal :open="open" @cancel="handleCancel" @ok="handleOk">
+    <template #title>
+      <a-skeleton v-if="isLoading" :paragraph="{ rows: 0 }" active />
+      <div v-else>{{ isEditing ? item.title : 'Добавление пароля' }}</div>
+    </template>
     <template #footer>
-      <a-button key="submit" type="primary" :loading="loading" @click="handleOk"
+      <a-flex v-if="isEditing" justify="space-between" wrap="wrap">
+        <a-button type="link" danger>Удалить пароль</a-button>
+        <a-button type="primary">Сохранить</a-button>
+      </a-flex>
+      <a-button v-else key="submit" type="primary" :loading="loading" @click="handleOk"
         >Добавить пароль</a-button
       >
     </template>
-    <a-form ref="modal" layout="vertical" :model="formState" name="basic" autocomplete="off">
+    <a-space v-if="isLoading" class="w-[250px]" direction="vertical">
+      <a-flex justify="space-between" wrap="wrap">
+        <a-skeleton-input active />
+      </a-flex>
+      <a-flex justify="space-between" wrap="wrap">
+        <a-skeleton-input active />
+        <a-skeleton-button active />
+      </a-flex>
+      <a-flex justify="space-between" wrap="wrap">
+        <a-skeleton-input class="flex-grow" active />
+      </a-flex>
+      <a-flex justify="space-between" wrap="wrap">
+        <a-skeleton-input class="flex-grow" active />
+        <a-skeleton-button active />
+      </a-flex>
+    </a-space>
+    <a-form v-else ref="modal" layout="vertical" :model="formState" name="basic" autocomplete="off">
       <a-form-item
         name="title"
         class="w-[340px]"
@@ -96,7 +174,10 @@
             </template>
           </a-input>
         </a-form-item>
-        <a-button type="primary" class="flex-grow" ghost>Вставить</a-button>
+        <a-button v-if="!isEditing" type="primary" class="flex-grow" ghost>Вставить</a-button>
+        <a-button v-else type="primary" class="flex-grow" ghost @click="copyText(formState.site)"
+          >Скопировать</a-button
+        >
       </a-flex>
       <a-form-item
         class="w-[340px]"
@@ -115,7 +196,7 @@
       </a-form-item>
       <a-flex wrap="wrap" :gap="4">
         <a-form-item
-          class="flex-grow w-[340px]"
+          class="w-[340px]"
           name="password"
           :rules="[{ required: true, message: 'Введите пароль' }]"
         >
@@ -129,8 +210,26 @@
             </template>
           </a-input-password>
         </a-form-item>
-        <a-button type="primary" ghost>Генерировать</a-button>
+        <a-button
+          v-if="!isEditing"
+          type="primary"
+          class="flex-grow"
+          ghost
+          @click="toggleLeaksPassword()"
+          >Проверить</a-button
+        >
+        <a-button
+          v-else
+          type="primary"
+          class="flex-grow"
+          ghost
+          @click="copyText(formState.password)"
+          >Скопировать</a-button
+        >
       </a-flex>
+      <div v-if="isCheckLeaksPassword">
+        <leak-password-form ref="leaksFormRef" />
+      </div>
     </a-form>
   </a-modal>
 </template>
