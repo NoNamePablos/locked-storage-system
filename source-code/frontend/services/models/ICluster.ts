@@ -1,8 +1,12 @@
+import type { IUser } from '~/services/models/user'
+
 export interface ICluster {
   id: number
   name: string
   created: string
+  users?: IUser[]
 }
+
 export interface IRecordItem {
   id: number
   email: string
@@ -10,4 +14,11 @@ export interface IRecordItem {
   password: string
   site: string
   title?: string
+}
+
+export interface IClusterUserItem {
+  id: number
+  name: string
+  email: string
+  role: string
 }

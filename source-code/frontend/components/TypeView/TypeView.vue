@@ -6,6 +6,7 @@
   interface IProps<T> {
     items: T[]
     typeView: ECardsView
+    buttonText: string
   }
   type TElementType<T> = T extends (infer U)[] ? U : never
 
@@ -29,29 +30,15 @@
     (e: 'add'): void
     (e: 'edit'): void
   }>()
-
-  const getFavicon = url => {
-    return `https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${url}&size=64`
-  }
 </script>
 
 <template>
   <div :class="['mb-4', computedClasses]">
-    <div v-for="cluster in itemsList" :key="cluster.id" @click="emits('edit')">
-      <div
-        class="p-4 rounded border border-solid border-gray-400 flex items-center gap-4 hover:shadow transition-all cursor-pointer"
-      >
-        <div>
-          <img :src="getFavicon(cluster.site)" class="w-[64px] h-[64px] object-contain" />
-        </div>
-        <div class="flex flex-col gap-2">
-          <div class="font-bold text-md">{{ cluster.site }}</div>
-          <div class="text-gray-400 font-medium">{{ cluster.email }}</div>
-        </div>
-      </div>
+    <div v-for="item in itemsList" :key="item.id" @click="emits('edit')">
+      <slot name="card" :item="item" />
     </div>
   </div>
-  <add-button title="Добавить пароль" @click="emits('add')" />
+  <add-button :title="buttonText" @click="emits('add')" />
 </template>
 
 <style scoped></style>

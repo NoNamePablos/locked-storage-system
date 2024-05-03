@@ -7,11 +7,18 @@
   import { mockCluster } from '~/mock/clusters'
   import AuthCluster from '~/components/Cluster/AuthCluster.vue'
   import UsersModalCluster from '~/components/Cluster/UsersModalCluster.vue'
+  import { RecordsHeader } from '#components'
+  import { useTypeOfView } from '~/services/composables'
+  import { StorageKeys } from '~/services/constants/StorageKeys'
+  import ClusterCard from '~/components/Cluster/ClusterCard.vue'
+  import ClusterModal from '~/components/Cluster/ClusterModal.vue'
 
   definePageMeta({
     layout: 'platform-layout',
     middleware: ['auth']
   })
+
+  const { typeOfView, changeTypeOfView } = useTypeOfView(StorageKeys.CLUSTER_TYPE)
 
   const clasterSearch = ref<string>('')
   const onSearch = (searchValue: string) => {
@@ -79,30 +86,19 @@
 
 <template>
   <div class="h-full">
-    <platform-header title="Пространство" />
+    <platform-header class="mt-4" title="Хранилища">
+      <template #right>
+        <a-button
+          type="primary"
+          size="middle"
+          :icon="h(PlusOutlined)"
+          @click="handleOpenClusterModal()"
+          >Добавить хранилище</a-button
+        >
+      </template>
+    </platform-header>
     <a-layout class="bg-white h-full">
-      <div
-        class="mt-4 pb-6 px-4 flex w-full items-center flex-wrap justify-between border-solid border-transparent border-b-gray-200 border-0 border-b-[1px]"
-      >
-        <div class="max-w-[400px] mt-4 w-full">
-          <a-input-search
-            v-model:value="clasterSearch"
-            placeholder="Введите название кластера"
-            size="large"
-            :bordered="false"
-            @search="onSearch($event)"
-          />
-        </div>
-        <div>
-          <a-button
-            type="dashed"
-            size="large"
-            :icon="h(PlusOutlined)"
-            @click="handleOpenClusterModal()"
-            >Добавить кластер</a-button
-          >
-        </div>
-      </div>
+      <records-header :type-view="typeOfView" @change-view="changeTypeOfView($event)" />
       <a-layout-content class="mt-6 px-4">
         <empty
           v-if="!mockCluster.length"
@@ -110,33 +106,21 @@
           button-title="Добавить кластер"
           @trigger="handleOpenClusterModal()"
         />
-        <div>
-          <a-flex wrap="wrap" gap="middle">
-            <div v-for="cluster in mockCluster" :key="cluster.id">
-              <a-card hoverable style="width: 200px">
-                <a-card-meta
-                  :title="cluster.name"
-                  @click="openAuthModal(cluster.name, cluster.id)"
-                />
-                <template #actions>
-                  <plus-outlined @click="openUsersModal()" />
-                  <EditOutlined />
-                  <base-delete-modal :id="cluster.id" @confirm-delete="onDeleteCluster($event)">
-                    <div class="text-red-600">
-                      <delete-outlined />
-                    </div>
-                  </base-delete-modal>
-                </template>
-              </a-card>
-            </div>
-          </a-flex>
-        </div>
-
+        <type-view
+          :items="mockCluster"
+          :type-view="typeOfView"
+          button-text="Добавить хранилище"
+          @add="handleOpenClusterModal()"
+        >
+          <template #card="{ item }">
+            <cluster-card :item="item" />
+          </template>
+        </type-view>
         <users-modal-cluster
           modal-title="Пользователи кластера"
           class="max-w-[600px]"
           :loading="userModalLoading"
-          :open="usersModal"
+          :open="false"
           @close="closeUsersModal()"
           @submit="handleOk3()"
         />
@@ -149,10 +133,7 @@
           @close="closeAuthModal()"
           @submit="handleOk2($event)"
         />
-        <create-cluster
-          modal-title="Cоздание кластера"
-          class="max-w-[600px]"
-          :loading="loadingCluster"
+        <cluster-modal
           :open="createClusterModal"
           @close="handleCloseClusterModal()"
           @submit="handleOk()"

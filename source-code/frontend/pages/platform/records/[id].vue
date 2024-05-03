@@ -92,9 +92,14 @@
           v-else
           :items="recordsList"
           :type-view="typeOfView"
+          button-text="Добавить пароль"
           @edit="openWithEditing()"
           @add="open()"
-        />
+        >
+          <template #card="{ item }">
+            <records-card :item="item" />
+          </template>
+        </type-view>
       </a-layout-content>
     </a-layout>
   </div>

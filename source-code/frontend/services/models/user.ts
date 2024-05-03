@@ -1,5 +1,7 @@
 import { RoleType } from '~/services/constants/RoleType'
 
+//roleType генерация на основе массива
+
 export interface IUser {
   avatar: string
   companyId: string | null
