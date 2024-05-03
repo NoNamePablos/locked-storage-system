@@ -5,6 +5,7 @@ export interface ICluster {
   name: string
   created: string
   users?: IUser[]
+  password?: string
 }
 
 export interface IRecordItem {

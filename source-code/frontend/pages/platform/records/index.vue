@@ -4,7 +4,7 @@
   import { ref } from 'vue'
   import Empty from '~/components/Empty/Empty.vue'
   import CreateCluster from '~/components/Cluster/CreateCluster.vue'
-  import { mockCluster } from '~/mock/clusters'
+  import { mockCluster, mockClusterById } from '~/mock/clusters'
   import AuthCluster from '~/components/Cluster/AuthCluster.vue'
   import UsersModalCluster from '~/components/Cluster/UsersModalCluster.vue'
   import { RecordsHeader } from '#components'
@@ -12,6 +12,8 @@
   import { StorageKeys } from '~/services/constants/StorageKeys'
   import ClusterCard from '~/components/Cluster/ClusterCard.vue'
   import ClusterModal from '~/components/Cluster/ClusterModal.vue'
+  import TypeView from '~/components/TypeView/TypeView.vue'
+  import { mockRecordById } from '~/mock/records'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -33,6 +35,8 @@
   const handleCloseClusterModal = () => {
     console.log('fdsfsd')
     createClusterModal.value = false
+    isEditingRecord.value = false
+    recordEditItem.value = null
   }
 
   const authModal = ref<boolean>(false)
@@ -40,9 +44,6 @@
   const usersModal = ref<boolean>(false)
   const userModalLoading = ref<boolean>(false)
 
-  const openUsersModal = () => {
-    usersModal.value = true
-  }
   const closeUsersModal = () => {
     usersModal.value = false
   }
@@ -79,6 +80,28 @@
     }, 2000)
   }
 
+  const isLoadingCluster = ref(false)
+  const recordEditItem = ref(null)
+  const isEditingRecord = ref(false)
+  const fetchRecordsById = () => {
+    isLoadingCluster.value = true
+    try {
+      setTimeout(() => {
+        recordEditItem.value = mockClusterById
+        console.log(recordEditItem.value)
+        isLoadingCluster.value = false
+      }, 400)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const openWithEditing = () => {
+    createClusterModal.value = true
+    isEditingRecord.value = true
+    fetchRecordsById()
+  }
+
   const onDeleteCluster = id => {
     console.log('deleting cluster: ', id)
   }
@@ -111,6 +134,7 @@
           :type-view="typeOfView"
           button-text="Добавить хранилище"
           @add="handleOpenClusterModal()"
+          @edit="openWithEditing()"
         >
           <template #card="{ item }">
             <cluster-card :item="item" />
@@ -135,6 +159,10 @@
         />
         <cluster-modal
           :open="createClusterModal"
+          :is-editing="isEditingRecord"
+          :is-loading="isLoadingCluster"
+          :title="isEditingRecord ? 'Радактирование хранилища' : 'Добавление хранилища'"
+          :item="recordEditItem"
           @close="handleCloseClusterModal()"
           @submit="handleOk()"
         />

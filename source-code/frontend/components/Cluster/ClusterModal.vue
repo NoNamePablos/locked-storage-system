@@ -5,6 +5,7 @@
   import type { ICluster } from '~/services/models'
   import { useClipboard } from '@vueuse/core'
   import GeneratePasswordForm from '~/components/Forms/GeneratePasswordForm.vue'
+  import type { IUser } from '~/services/models/user'
 
   const loading = ref<boolean>(false)
 
@@ -13,11 +14,13 @@
     isEditing?: boolean
     isLoading?: boolean
     item?: ICluster | unknown
+    title?: string
   }
 
   const props = withDefaults(defineProps<IProps>(), {
     isEditing: false,
     isLoading: false,
+    title: 'Добавление хранилища',
     item: () => ({})
   })
 
@@ -43,20 +46,18 @@
   }
 
   interface FormState {
-    title: string
-    site: string
-    login: string
+    name: string
     password: string
+    users: IUser[] | null
   }
   const modal = ref(null)
   const leaksFormRef = ref(null)
   const generateFormRef = ref(null)
 
   const formState = reactive<FormState>({
-    title: '',
-    site: '',
-    login: '',
-    password: ''
+    name: '',
+    password: '',
+    users: null
   })
 
   watch(
@@ -64,10 +65,9 @@
     newValue => {
       console.log(newValue)
       if (isEditing.value && newValue) {
-        formState.title = newValue?.title ?? ''
-        formState.site = newValue?.site ?? ''
-        formState.login = newValue?.login ?? ''
+        formState.name = newValue?.name ?? ''
         formState.password = newValue?.password ?? ''
+        formState.users = newValue?.users ?? null
       }
     },
     {
@@ -79,10 +79,9 @@
     () => open.value,
     newVal => {
       if (newVal) {
-        formState.title = ''
-        formState.site = ''
-        formState.login = ''
+        formState.name = ''
         formState.password = ''
+        formState.users = null
       }
       if (!newVal) {
         modal.value.resetFields()
@@ -121,7 +120,7 @@
   <a-modal :open="open" @cancel="handleCancel" @ok="handleOk">
     <template #title>
       <a-skeleton v-if="isLoading" :paragraph="{ rows: 0 }" active />
-      <div v-else>{{ isEditing ? item.title : 'Добавление хранилища' }}</div>
+      <div v-else>{{ title }}</div>
     </template>
     <template #footer>
       <a-flex v-if="isEditing" justify="space-between" wrap="wrap">
@@ -155,7 +154,7 @@
         :rules="[{ required: true, message: 'Введите название хранилища' }]"
       >
         <a-input
-          v-model:value="formState.title"
+          v-model:value="formState.name"
           class="text-gray-400"
           placeholder="Название хранилища"
         >
