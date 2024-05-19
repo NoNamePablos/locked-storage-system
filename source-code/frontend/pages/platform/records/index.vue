@@ -14,6 +14,7 @@
   import ClusterModal from '~/components/Cluster/ClusterModal.vue'
   import TypeView from '~/components/TypeView/TypeView.vue'
   import { mockRecordById } from '~/mock/records'
+  import clusterRepository from '~/services/repository/clusterRepository'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -22,18 +23,32 @@
 
   const { typeOfView, changeTypeOfView } = useTypeOfView(StorageKeys.CLUSTER_TYPE)
 
+  const userStore = useAuthStore()
   const clasterSearch = ref<string>('')
+
+  const authCluster = ref({
+    typeOfAuth: 'create',
+    clusterId: 0
+  })
   const onSearch = (searchValue: string) => {
     console.log('use value', searchValue)
     console.log('or use this.value', clasterSearch.value)
   }
 
   const createClusterModal = ref<boolean>(false)
-  const handleOpenClusterModal = () => {
-    createClusterModal.value = true
+  const handleOpenClusterModal = (id = 0, type = 'create') => {
+    console.log(type)
+    if (type === 'create') {
+      createClusterModal.value = true
+    }
+    if (type === 'edit') {
+      openAuthModal(id, type)
+    }
+    if (type === 'open') {
+      openAuthModal(id, type)
+    }
   }
   const handleCloseClusterModal = () => {
-    console.log('fdsfsd')
     createClusterModal.value = false
     isEditingRecord.value = false
     recordEditItem.value = null
@@ -43,25 +58,53 @@
   const clusterName = ref<string>('Авторизация')
   const usersModal = ref<boolean>(false)
   const userModalLoading = ref<boolean>(false)
+  const clustersList = ref([])
+
+  const fetchClusters = async () => {
+    try {
+      const request = {
+        user_id: userStore.getUser.id
+      }
+      const response = await clusterRepository.list(request)
+      clustersList.value = response
+
+      console.log(clustersList.value)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const closeUsersModal = () => {
     usersModal.value = false
   }
   const authModalId = ref<string | number>('')
-  const openAuthModal = (name: string, id: string | number) => {
+  const openAuthModal = (id: number, type: string) => {
     authModal.value = true
-    clusterName.value = `Авторизация в кластере  "${name}"`
-    authModalId.value = id
+    clusterName.value = `Авторизация в кластере`
+    authCluster.value.typeOfAuth = type
+    authCluster.value.clusterId = id
   }
   const closeAuthModal = () => {
     authModal.value = false
     authModalId.value = ''
+    authCluster.value.typeOfAuth = 'create'
+    authCluster.value.id = 0
   }
   const router = useRouter()
-  const handleOk2 = id => {
-    loadingCluster.value = false
-    router.push({ path: `/platform/records/${id}` })
-    closeAuthModal()
+  const handleOk2 = async ({ data, type }) => {
+    try {
+      closeAuthModal()
+      if (type === 'edit') {
+        createClusterModal.value = true
+        isEditingRecord.value = true
+        recordEditItem.value = data
+      }
+      if (type === 'open') {
+        await router.push({ path: `/platform/records/${data.id}` })
+      }
+    } catch (e) {
+      console.log(e)
+    }
   }
   const handleOk3 = () => {
     userModalLoading.value = true
@@ -72,39 +115,35 @@
   }
 
   const loadingCluster = ref(false)
-  const handleOk = () => {
+  const appendCluster = async data => {
     loadingCluster.value = true
-    setTimeout(() => {
+    try {
+      await fetchClusters()
+
+      handleCloseClusterModal()
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoadingCluster.value = false
+    }
+    /*setTimeout(() => {
       loadingCluster.value = false
       handleCloseClusterModal()
-    }, 2000)
+    }, 2000)*/
   }
 
   const isLoadingCluster = ref(false)
   const recordEditItem = ref(null)
   const isEditingRecord = ref(false)
-  const fetchRecordsById = () => {
-    isLoadingCluster.value = true
-    try {
-      setTimeout(() => {
-        recordEditItem.value = mockClusterById
-        console.log(recordEditItem.value)
-        isLoadingCluster.value = false
-      }, 400)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const openWithEditing = () => {
-    createClusterModal.value = true
-    isEditingRecord.value = true
-    fetchRecordsById()
-  }
 
   const onDeleteCluster = id => {
     console.log('deleting cluster: ', id)
   }
+
+  onMounted(async () => {
+    await userStore.profile()
+    await fetchClusters()
+  })
 </script>
 
 <template>
@@ -124,20 +163,24 @@
       <records-header :type-view="typeOfView" @change-view="changeTypeOfView($event)" />
       <a-layout-content class="mt-6 px-4">
         <empty
-          v-if="!mockCluster.length"
+          v-if="!clustersList.length"
           title="Сейчас кластеры пусты ( "
           button-title="Добавить кластер"
           @trigger="handleOpenClusterModal()"
         />
         <type-view
-          :items="mockCluster"
+          v-else
+          :items="clustersList"
           :type-view="typeOfView"
           button-text="Добавить хранилище"
           @add="handleOpenClusterModal()"
-          @edit="openWithEditing()"
         >
           <template #card="{ item }">
-            <cluster-card :item="item" />
+            <cluster-card
+              :item="item"
+              @edit="handleOpenClusterModal($event, 'edit')"
+              @open="handleOpenClusterModal($event, 'open')"
+            />
           </template>
         </type-view>
         <users-modal-cluster
@@ -149,7 +192,8 @@
           @submit="handleOk3()"
         />
         <auth-cluster
-          :id="authModalId"
+          :cluster-id="authCluster.clusterId"
+          :type="authCluster.typeOfAuth"
           :modal-title="clusterName"
           class="max-w-[600px]"
           :loading="loadingCluster"
@@ -164,7 +208,7 @@
           :title="isEditingRecord ? 'Радактирование хранилища' : 'Добавление хранилища'"
           :item="recordEditItem"
           @close="handleCloseClusterModal()"
-          @submit="handleOk()"
+          @confirm="appendCluster($event)"
         />
       </a-layout-content>
     </a-layout>

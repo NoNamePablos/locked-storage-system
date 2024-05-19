@@ -1,19 +1,27 @@
 <script setup lang="ts">
   import { ECardsView } from '~/services/enums'
-  import { Plus } from 'lucide-vue-next'
   import AddButton from '~/components/ui/AddButton.vue'
+  import { watch } from 'vue'
 
-  interface IProps<T> {
-    items: T[]
+  interface IProps {
+    items: unknown[]
     typeView: ECardsView
     buttonText: string
   }
-  type TElementType<T> = T extends (infer U)[] ? U : never
 
-  const props = defineProps<IProps<unknown>>()
-  const { typeView } = toRefs(props)
-  type ItemType = TElementType<typeof props.items>
-  const itemsList = props.items as ItemType[]
+  const props = defineProps<IProps>()
+  const { typeView, items } = toRefs(props)
+  const itemsList = ref([])
+
+  watch(
+    () => items.value,
+    newValue => {
+      itemsList.value = newValue
+    },
+    {
+      immediate: true
+    }
+  )
 
   const computedClasses = computed(() => {
     const base = 'gap-4'
@@ -28,13 +36,12 @@
 
   const emits = defineEmits<{
     (e: 'add'): void
-    (e: 'edit'): void
   }>()
 </script>
 
 <template>
   <div :class="['mb-4', computedClasses]">
-    <div v-for="item in itemsList" :key="item.id" @click="emits('edit')">
+    <div v-for="(item, index) in itemsList" :key="index">
       <slot name="card" :item="item" />
     </div>
   </div>

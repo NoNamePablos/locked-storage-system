@@ -1,15 +1,42 @@
 <script setup lang="ts">
   import BaseModal from '~/components/Base/BaseModal.vue'
   import { onUpdated, reactive, useAttrs, toRefs, ref } from 'vue'
+  import clusterRepository from '~/services/repository/clusterRepository'
 
   const attrs = useAttrs()
 
   interface IProps {
-    id: string | number
+    type: string | number
+    clusterId: number
+    loading: boolean
   }
   const props = defineProps<IProps>()
 
-  const { id } = toRefs(props)
+  const userStore = useAuthStore()
+  const { clusterId, type } = toRefs(props)
+  const isLoading = ref(false)
+
+  const fetchRecordsById = async () => {
+    isLoading.value = true
+    try {
+      console.log({
+        user_id: userStore.getUser.id,
+        password: formState.password,
+        cluster_id: clusterId.value
+      })
+
+      const response = await clusterRepository.findById({
+        user_id: userStore.getUser.id,
+        password: formState.password,
+        cluster_id: clusterId.value
+      })
+      emits('submit', { data: response, type: type.value })
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoading.value = false
+    }
+  }
 
   interface FormState {
     password: string
@@ -20,14 +47,16 @@
   })
 
   const emits = defineEmits<{
-    (e: 'submit', data: string | number): void
+    (e: 'submit', data: unknown): void
   }>()
 
   const triggerModal = async () => {
     try {
       const validate = await modalAuth.value.validateFields()
       if (!validate.errorFields) {
-        emits('submit', id.value)
+        await fetchRecordsById()
+        /*const data = { password: formState.password, type: props.type }
+        emits('submit', data)*/
       }
     } catch (e) {
       console.log(e)
@@ -36,7 +65,7 @@
 
   onUpdated(() => {
     if (!attrs.open) {
-      modalAuth.value.resetFields()
+      modalAuth.value?.resetFields()
     }
   })
 </script>
@@ -46,7 +75,7 @@
     <a-form ref="modalAuth" layout="vertical" :model="formState" name="basic" autocomplete="off">
       <a-form-item
         name="password"
-        :rules="[{ required: true, message: 'Please input correct password!' }]"
+        :rules="[{ required: true, message: 'Пожалуйста введите пароль от кластера' }]"
       >
         <a-input-password v-model:value="formState.password" />
       </a-form-item>

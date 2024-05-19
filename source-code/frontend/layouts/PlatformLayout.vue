@@ -40,7 +40,7 @@
   const platrformNav = ref([
     {
       to: RoutesNames.WORKSPACE_COMPANY,
-      title: 'Компания',
+      title: 'Пользователи',
       permission: PermissionsType.ALL,
       icon: h(DatabaseOutlined)
     },
@@ -51,7 +51,7 @@
       icon: h(UserOutlined)
     },
     {
-      to: RoutesNames.WORKSPACE_PERSONAL,
+      to: RoutesNames.RECORDS,
       title: 'Мое пространство',
       permission: PermissionsType.ALL,
       icon: h(ExperimentOutlined)

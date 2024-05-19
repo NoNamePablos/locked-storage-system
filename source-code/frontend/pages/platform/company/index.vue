@@ -2,11 +2,15 @@
   import { message } from 'ant-design-vue'
   import { defineAsyncComponent, ref } from 'vue'
   import { useRouter } from '#imports'
+  import companyRepository from '~/services/repository/companyRepository'
 
   const router = useRouter()
   const current = ref<number>(0)
   const companyInfoForm = ref(null)
   const isShowPrev = ref(true)
+  const userStore = useAuthStore()
+  const isLoading = ref<boolean>(false)
+
   const next = () => {
     if (steps[current.value].key === 'index') {
       current.value++
@@ -16,11 +20,23 @@
     }
   }
 
-  const onValidate = data => {
-    //todo send data
-    console.log('validated: data ', data)
-    current.value++
-    isShowPrev.value = false
+  const onValidate = async data => {
+    isLoading.value = true
+    try {
+      const request = {
+        owner_id: userStore.getUser.id,
+        name: data?.title ?? '',
+        description: data?.description ?? ''
+      }
+      const response = await companyRepository.register(request)
+      await userStore.profile()
+      current.value++
+      isShowPrev.value = false
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoading.value = false
+    }
   }
 
   const prev = () => {
@@ -70,11 +86,21 @@
         @validate="onValidate($event)"
       />
       <div class="steps-action mt-4">
-        <a-button v-if="current < steps.length - 1" type="primary" @click="next">Далее</a-button>
+        <a-button
+          v-if="current < steps.length - 1"
+          type="primary"
+          :disabled="isLoading"
+          @click="next"
+          >Далее</a-button
+        >
         <a-button v-if="current == steps.length - 1" type="primary" @click="success()">
           Готово
         </a-button>
-        <a-button v-if="current > 0 && isShowPrev" style="margin-left: 8px" @click="prev"
+        <a-button
+          v-if="current > 0 && isShowPrev"
+          :disabled="isLoading"
+          style="margin-left: 8px"
+          @click="prev"
           >Назад</a-button
         >
       </div>

@@ -7,10 +7,14 @@
   const authStore = useAuthStore()
   const settingsStore = useSettingsStore()
   const { isMobile } = storeToRefs(settingsStore)
-  onMounted(async () => {
+
+  onBeforeMount(async () => {
     if (authStore.getToken()) {
       await authStore.profile()
     }
+  })
+
+  onMounted(async () => {
     const mq = window.matchMedia('(max-width: 640px)')
     isMobile.value = mq.matches
     mq.addEventListener('change', () => {

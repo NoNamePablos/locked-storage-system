@@ -31,7 +31,12 @@
 
       if (authStore.isAuth) {
         await authStore.profile()
-        await router.push(RoutesNames.PLATFORM)
+        if (authStore.getUser.company_id) {
+          await router.push(RoutesNames.RECORDS)
+        } else {
+          await router.push(RoutesNames.WORKSPACE_PERSONAL)
+        }
+
         notification.success({
           message: 'Удачная авторизация',
           description: 'Вы успещно вошли в систему.'

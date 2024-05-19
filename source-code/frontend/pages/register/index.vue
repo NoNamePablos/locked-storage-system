@@ -15,7 +15,8 @@
     email: string
     password: string
     repeatPassword: string
-    role: 'user' | 'company'
+    role: 'user'
+    typeRegister: 'user' | 'company'
   }
 
   const formState = reactive<FormState>({
@@ -23,7 +24,8 @@
     email: '',
     password: '',
     repeatPassword: '',
-    role: 'user'
+    role: 'user',
+    typeRegister: 'user'
   })
   const onFinish = async (values: any) => {
     try {
@@ -33,13 +35,17 @@
         email: values.email,
         password: values.password,
         confirm_password: values.repeatPassword,
-        role: values.role
+        role: 'user'
       }
       await authStore.register(transformData)
 
       if (authStore.isAuth) {
         await authStore.profile()
-        await router.push(RoutesNames.PLATFORM_COMPANY)
+        if (values.typeRegister === 'company') {
+          await router.push(RoutesNames.PLATFORM_COMPANY)
+        } else {
+          await router.push(RoutesNames.PLATFORM)
+        }
         notification.success({
           message: 'Удачная авторизация',
           description: 'Вы успещно вошли в систему.'
@@ -71,8 +77,12 @@
           @finish-failed="onFinishFailed($event)"
         >
           <a-typography-title class="py-10" :level="2">Зарегистрироваться</a-typography-title>
-          <a-form-item name="role" size="large">
-            <a-radio-group v-model:value="formState.role" class="w-full flex" button-style="solid">
+          <a-form-item name="typeRegister" size="large">
+            <a-radio-group
+              v-model:value="formState.typeRegister"
+              class="w-full flex"
+              button-style="solid"
+            >
               <a-radio-button value="user" class="w-full text-center">Пользователь</a-radio-button>
               <a-radio-button value="company" class="w-full text-center">Компания</a-radio-button>
             </a-radio-group>

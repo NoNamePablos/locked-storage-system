@@ -11,7 +11,6 @@ export const useAuthStore = defineStore('auth', {
     async profile() {
       try {
         const response = await personalRepository.profile()
-        console.log(response)
         this.user = response
         if (this.user) {
           this.isAuth = true
@@ -37,7 +36,6 @@ export const useAuthStore = defineStore('auth', {
       const newToken = data.access_token
       localStorage.setItem(this.authTokenKey, newToken)
       this.isAuth = true
-      await this.profile()
     },
     removeToken() {
       localStorage.removeItem(this.authTokenKey)
@@ -50,9 +48,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(params) {
       const response = await personalRepository.register(params)
-      const { data } = response
-      console.log(data)
-      const newToken = data.token.original.access_token
+      const newToken = response.token.original.access_token
       localStorage.setItem(this.authTokenKey, newToken)
       this.isAuth = true
     },
@@ -68,6 +64,9 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isLoginIn(state) {
       return state.isAuth
+    },
+    getUser(state) {
+      return state.user
     }
   },
   persist: true

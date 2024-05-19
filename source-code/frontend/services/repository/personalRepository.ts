@@ -1,33 +1,51 @@
 import { useNuxtApp } from '#imports'
+import type { IUserLogin } from '~/services/models'
+
+/*todo: ts types*/
 
 const personalRepository = {
-  login: params => {
+  login: (params: IUserLogin) => {
     const { $http } = useNuxtApp()
-    return $http.post('/api/auth/login', params)
+    const response = $http.post('/api/auth/login', params)
+    return response
   },
-  register: params => {
+  register: (params: IUserLogin) => {
     const { $http } = useNuxtApp()
-    return $http.post('/api/auth/register', params)
+    const { data } = $http.post('/api/auth/register', params)
+    return data
   },
   refresh: () => {
     const { $http } = useNuxtApp()
     return $http.post('/api/auth/refresh')
   },
+  refreshPassword: data => {
+    const { $http } = useNuxtApp()
+    return $http.get('/api/mail', {
+      params: {
+        email: data.email
+      }
+    })
+  },
+  confirmRecovery: async params => {
+    const { $http } = useNuxtApp()
+    const { data } = await $http.post('/api/confirm-password', params)
+    return data
+  },
   profile: async () => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/auth/me')
+    const { data } = await $http.post('/api/auth/me')
+    return data
+  },
 
-    return {
-      avatar: response.data.avatar,
-      companyId: response.data.company_id,
-      companyRoleId: response.data.company_role_id,
-      email: response.data.email,
-      emailVerifiedAd: response.data.email_verified_ad,
-      id: response.data.id,
-      name: response.data.name,
-      role: response.data.role,
-      updatedAt: response.data.updated_at
-    }
+  settingsList: async () => {
+    const { $http } = useNuxtApp()
+    const response = await $http.get('/api/auth/property?role=model')
+    return response.data.data
+  },
+
+  save: async params => {
+    const { $http } = useNuxtApp()
+    return $http.post('/api/auth/fill', params)
   }
 }
 export default personalRepository

@@ -20,7 +20,7 @@
 
   const triggerModal = async () => {
     try {
-      const validate = await userModalCluser.value.validateFields()
+      const validate = await userModalCluser.value?.validateFields()
       if (!validate.errorFields) {
         emits('submit')
       }
@@ -31,7 +31,7 @@
 
   onUpdated(() => {
     if (!attrs.open) {
-      userModalCluser.value.resetFields()
+      userModalCluser.value?.resetFields()
     }
   })
 </script>
