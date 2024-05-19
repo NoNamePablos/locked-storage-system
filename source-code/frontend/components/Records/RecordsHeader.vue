@@ -11,8 +11,11 @@
 
   defineProps<IProps>()
 
+  const search = ref('')
+
   const emit = defineEmits<{
     (e: 'change-view', data: ECardsView): void
+    (e: 'search', data: string): void
   }>()
 
   const changeView = (data: ECardsView) => {
@@ -20,8 +23,7 @@
   }
 
   const onSearch = (searchValue: string) => {
-    console.log('use value', searchValue)
-    console.log('or use this.value', clasterSearch.value)
+    emit('search', searchValue)
   }
 </script>
 
@@ -32,11 +34,11 @@
     <div class="max-w-[400px] mt-4 w-full">
       <div class="border-solid border-0 border-b-2 border-gray-400">
         <a-input
-          v-model:value="clasterSearch"
+          v-model:value="search"
           :bordered="false"
           placeholder="Поиск..."
           class="text-gray-400"
-          @change="onSearch($event)"
+          @change="onSearch($event.target.value)"
         >
           <template #prefix>
             <search :size="16" color="currentColor" />

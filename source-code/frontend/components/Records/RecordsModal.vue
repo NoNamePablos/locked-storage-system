@@ -4,6 +4,8 @@
   import LeakPasswordForm from '~/components/Forms/LeakPasswordForm.vue'
   import type { IRecordItem } from '~/services/models'
   import { useClipboard, usePermission } from '@vueuse/core'
+  import clusterRepository from '~/services/repository/clusterRepository'
+  import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
 
   const loading = ref<boolean>(false)
 
@@ -12,6 +14,7 @@
     isEditing?: boolean
     isLoading?: boolean
     item?: IRecordItem | unknown
+    clusterdId: number | string
   }
 
   const props = withDefaults(defineProps<IProps>(), {
@@ -21,20 +24,44 @@
   })
 
   const { copy } = useClipboard()
-  const { open, isEditing, isLoading, item } = toRefs(props)
+  const { open, isEditing, isLoading, item, clusterdId } = toRefs(props)
 
   const emits = defineEmits<{
     (e: 'close'): void
     (e: 'confirm', data: unknown): void
   }>()
 
-  const handleOk = () => {
+  const handleOk = async () => {
     loading.value = true
-    setTimeout(() => {
-      loading.value = false
-      //async-await request to back
-      emits('close')
-    }, 2000)
+    try {
+      const validate = await modal.value?.validateFields()
+      if (validate && !validate.errorFields) {
+        const request = {
+          password: formState.password,
+          site: formState.site,
+          login: formState.login,
+          title: formState.title,
+          ...(!isEditing.value && {
+            cluster_id: +clusterdId.value
+          }),
+          ...(isEditing.value && {
+            record_id: item.value.id
+          })
+        }
+
+        console.log(request)
+
+        const method = isEditing.value
+          ? personalRecordsRepository.update
+          : personalRecordsRepository.create
+        const response = await method(request)
+        emits('confirm', response)
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = true
+    }
   }
 
   const handleCancel = () => {
@@ -60,12 +87,15 @@
   watch(
     () => item.value,
     newValue => {
-      console.log(newValue)
+      console.log('mew : ', newValue)
+      console.log(isEditing.value)
       if (isEditing.value && newValue) {
+        console.log('news: ', newValue)
         formState.title = newValue?.title ?? ''
         formState.site = newValue?.site ?? ''
         formState.login = newValue?.login ?? ''
         formState.password = newValue?.password ?? ''
+        console.log(formState)
       }
     },
     {
@@ -73,29 +103,35 @@
     }
   )
 
+  const isCheckLeaksPassword = ref(false)
+  const toggleLeaksPassword = () => {
+    isCheckLeaksPassword.value = !isCheckLeaksPassword.value
+  }
+
   watch(
     () => open.value,
     newVal => {
-      if (newVal) {
+      if (newVal && !isEditing.value) {
+        console.log(newVal)
+        console.log('item:', formState)
         formState.title = ''
         formState.site = ''
         formState.login = ''
         formState.password = ''
       }
       if (!newVal) {
-        modal.value.resetFields()
+        console.log('res: ', newVal)
+        modal.value?.resetFields()
         if (isCheckLeaksPassword.value) {
-          leaksFormRef.value.resetForm()
+          leaksFormRef.value?.resetForm()
           isCheckLeaksPassword.value = false
         }
       }
+    },
+    {
+      immediate: true
     }
   )
-
-  const isCheckLeaksPassword = ref(false)
-  const toggleLeaksPassword = () => {
-    isCheckLeaksPassword.value = !isCheckLeaksPassword.value
-  }
 
   const copyText = data => {
     try {
@@ -105,18 +141,32 @@
       message.error('Ошибка копирования')
     }
   }
+
+  const deleteRecords = async () => {
+    loading.value = true
+    try {
+      const response = await personalRecordsRepository.delete(item.value?.id)
+      emits('confirm', response)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      loading.value = false
+    }
+  }
 </script>
 
 <template>
   <a-modal :open="open" @cancel="handleCancel" @ok="handleOk">
     <template #title>
       <a-skeleton v-if="isLoading" :paragraph="{ rows: 0 }" active />
-      <div v-else>{{ isEditing ? item.title : 'Добавление пароля' }}</div>
+      <div v-else>{{ isEditing ? item?.title : 'Добавление пароля' }}</div>
     </template>
     <template #footer>
       <a-flex v-if="isEditing" justify="space-between" wrap="wrap">
-        <a-button type="link" danger>Удалить пароль</a-button>
-        <a-button type="primary">Сохранить</a-button>
+        <a-button type="link" danger :loading="loading" @click="deleteRecords()"
+          >Удалить пароль</a-button
+        >
+        <a-button type="primary" :loading="loading" @click="handleOk()">Сохранить</a-button>
       </a-flex>
       <a-button v-else key="submit" type="primary" :loading="loading" @click="handleOk"
         >Добавить пароль</a-button
@@ -167,7 +217,7 @@
             <template #suffix>
               <a-tooltip>
                 <template #title>
-                  <span class="text-center block">Вводите полный адрес https://vk.com</span>
+                  <span class="text-center block">Вводите полный адрес vk.com</span>
                 </template>
                 <info :size="20" color="currentColor" />
               </a-tooltip>

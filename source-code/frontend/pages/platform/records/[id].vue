@@ -10,6 +10,8 @@
   import { StorageKeys } from '~/services/constants/StorageKeys'
   import type { IRecordItem } from '~/services/models'
   import TypeView from '~/components/TypeView/TypeView.vue'
+  import clusterRepository from '~/services/repository/clusterRepository'
+  import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
 
   definePageMeta({
     layout: 'platform-layout'
@@ -23,33 +25,43 @@
   const isEditingRecord = ref(false)
   const recordEditItem = ref<IRecordItem | null>()
 
-  const fetchRecords = () => {
+  const route = useRoute()
+
+  console.log(route)
+
+  const fetchRecords = async () => {
     isLoading.value = true
     try {
-      setTimeout(() => {
-        recordsList.value = mockRecords
-        isLoading.value = false
-      }, 400)
+      const request = {
+        cluster_id: route.params.id
+      }
+      const response = await personalRecordsRepository.list(request)
+      recordsList.value = response
+      console.log(recordsList.value)
     } catch (e) {
       console.log(e)
+    } finally {
+      isLoading.value = false
     }
   }
 
-  const fetchRecordsById = () => {
-    isLoadingRecord.value = true
+  const fetchRecordsById = async (id: number) => {
+    isLoading.value = true
     try {
-      setTimeout(() => {
-        recordEditItem.value = mockRecordById
-        console.log(recordEditItem.value)
-        isLoadingRecord.value = false
-      }, 400)
+      const response = await personalRecordsRepository.findById({
+        record_id: id
+      })
+      console.log(response)
+      recordEditItem.value = response
     } catch (e) {
       console.log(e)
+    } finally {
+      isLoading.value = false
     }
   }
 
-  onMounted(() => {
-    fetchRecords()
+  onMounted(async () => {
+    await fetchRecords()
   })
 
   const openModal = ref<boolean>(false)
@@ -57,15 +69,62 @@
   const close = () => {
     openModal.value = false
     isEditingRecord.value = false
+    isLoadingRecord.value = false
     recordEditItem.value = null
   }
   const open = () => {
     openModal.value = true
   }
-  const openWithEditing = () => {
-    openModal.value = true
-    isEditingRecord.value = true
-    fetchRecordsById()
+
+  const appendCluster = async (data = null) => {
+    isLoading.value = true
+    try {
+      await fetchRecords()
+      close()
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const openRecordsModal = async (id = 0, type = 'create') => {
+    if (type === 'create') {
+      openModal.value = true
+    }
+    if (type === 'edit') {
+      isLoadingRecord.value = true
+      isEditingRecord.value = true
+      try {
+        await fetchRecordsById(id)
+        openModal.value = true
+      } catch (e) {
+        console.log(e)
+      } finally {
+        isLoadingRecord.value = false
+      }
+    }
+  }
+
+  const serch = ref('')
+
+  const serchRecords = async data => {
+    isLoading.value = true
+    try {
+      if (!data.length) {
+        await fetchRecords()
+      } else {
+        const response = await personalRecordsRepository.search({
+          find: data,
+          cluster_id: +route.params.id
+        })
+        recordsList.value = response
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoading.value = false
+    }
   }
 </script>
 
@@ -80,7 +139,12 @@
       </template>
     </platform-header>
     <a-layout class="bg-white h-full">
-      <records-header :type-view="typeOfView" @change-view="changeTypeOfView($event)" />
+      <records-header
+        :search="serch"
+        :type-view="typeOfView"
+        @change-view="changeTypeOfView($event)"
+        @search="serchRecords($event)"
+      />
       <a-layout-content class="mt-6 px-4">
         <empty
           v-if="recordsList && recordsList.length === 0"
@@ -93,11 +157,10 @@
           :items="recordsList"
           :type-view="typeOfView"
           button-text="Добавить пароль"
-          @edit="openWithEditing()"
           @add="open()"
         >
           <template #card="{ item }">
-            <records-card :item="item" />
+            <records-card :item="item" @edit="openRecordsModal($event, 'edit')" />
           </template>
         </type-view>
       </a-layout-content>
@@ -108,7 +171,9 @@
     :is-loading="isLoadingRecord"
     :item="recordEditItem"
     :open="openModal"
+    :clusterd-id="route.params.id"
     @close="close()"
+    @confirm="appendCluster($event)"
   />
 </template>
 

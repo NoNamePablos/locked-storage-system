@@ -99,7 +99,6 @@
   watch(
     () => item.value,
     newValue => {
-      console.log(newValue)
       if (isEditing.value && newValue) {
         formState.name = newValue?.name ?? ''
         formState.password = newValue?.password ?? ''

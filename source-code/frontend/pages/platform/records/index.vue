@@ -15,6 +15,7 @@
   import TypeView from '~/components/TypeView/TypeView.vue'
   import { mockRecordById } from '~/mock/records'
   import clusterRepository from '~/services/repository/clusterRepository'
+  import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -61,6 +62,7 @@
   const clustersList = ref([])
 
   const fetchClusters = async () => {
+    isLoadingCluster.value = true
     try {
       const request = {
         user_id: userStore.getUser.id
@@ -71,6 +73,8 @@
       console.log(clustersList.value)
     } catch (e) {
       console.log(e)
+    } finally {
+      isLoadingCluster.value = false
     }
   }
 
@@ -144,6 +148,25 @@
     await userStore.profile()
     await fetchClusters()
   })
+
+  const serchClusters = async data => {
+    isLoadingCluster.value = true
+    try {
+      if (!data.length) {
+        await fetchClusters()
+      } else {
+        const response = await clusterRepository.search({
+          find: data
+        })
+        console.log(response)
+        clustersList.value = response
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoadingCluster.value = false
+    }
+  }
 </script>
 
 <template>
@@ -160,7 +183,11 @@
       </template>
     </platform-header>
     <a-layout class="bg-white h-full">
-      <records-header :type-view="typeOfView" @change-view="changeTypeOfView($event)" />
+      <records-header
+        :type-view="typeOfView"
+        @search="serchClusters($event)"
+        @change-view="changeTypeOfView($event)"
+      />
       <a-layout-content class="mt-6 px-4">
         <empty
           v-if="!clustersList.length"

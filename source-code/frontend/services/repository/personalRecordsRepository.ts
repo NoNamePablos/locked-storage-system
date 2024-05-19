@@ -2,46 +2,44 @@ import { useNuxtApp } from '#imports'
 
 /*todo: ts types*/
 
-const clusterRepository = {
+const personalRecordsRepository = {
   list: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.get('/api/clusters', params)
+    const response = await $http.get('/api/records', {
+      params: {
+        cluster_id: params.cluster_id
+      }
+    })
     return response.data.data
   },
   create: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/clusters/store', params)
+    const response = await $http.post('/api/records/store', params)
     return response.data.data
   },
   update: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/clusters/update', params)
+    const response = await $http.post('/api/records/update', params)
     return response.data.data
   },
   delete: async (id: number) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post(`/api/clusters/delete/${id}`)
+    const response = await $http.post(`/api/records/delete/${id}`)
     return response.data.data
   },
   findById: async (data: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.get('/api/clusters/show', {
+    const response = await $http.get('/api/records/show', {
       params: {
-        password: data.password,
-        user_id: data.user_id,
-        cluster_id: data.cluster_id
+        record_id: data.record_id
       }
     })
-
-    /*user_id: userStore.getUser.id,
-        password: formState.password,
-        cluster_id: clusterId.value
-*/ return response.data.data
+    return response.data.data
   },
   search: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/clusters/search', params)
+    const response = await $http.post('/api/records/search', params)
     return response.data.data
   }
 }
-export default clusterRepository
+export default personalRecordsRepository
