@@ -1,5 +1,4 @@
 import { useNuxtApp } from '#imports'
-import { IUserLogin } from '~/services/models'
 
 /*todo: ts types*/
 
@@ -27,10 +26,20 @@ const companyRepository = {
     })
     return response.data.data
   },
-  addUser: (params: unknown) => {
+  registerUser: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const { data } = $http.post('/api/auth/register', params)
-    return data
+    const response = $http.post('/api/auth/register', params)
+    return response
+  },
+  deleteUser: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/company/delete-user', params)
+    return response.data.data
+  },
+  addUser: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/company/user', params)
+    return response.data.data
   }
 }
 export default companyRepository

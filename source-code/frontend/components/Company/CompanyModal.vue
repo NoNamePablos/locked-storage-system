@@ -8,6 +8,7 @@
   import type { IUser } from '~/services/models/user'
   import clusterRepository from '~/services/repository/clusterRepository'
   import companyRepository from '~/services/repository/companyRepository'
+  import personalRepository from '~/services/repository/personalRepository'
 
   const loading = ref<boolean>(false)
 
@@ -50,7 +51,14 @@
           confirm_password: formState.password,
           role: 'user'
         }
-        const response = await companyRepository.addUser(request)
+        const registerUser = await companyRepository.registerUser(request)
+        console.log(registerUser)
+        const addUserRequest = {
+          company_id: userStore.getUser.owner.id,
+          user_id: registerUser.data.user.id
+        }
+        console.log(addUserRequest)
+        const response = await companyRepository.addUser(addUserRequest)
         emits('confirm', response)
       }
     } catch (e) {
@@ -149,7 +157,7 @@
         <a-button type="primary">Сохранить</a-button>
       </a-flex>
       <a-button v-else key="submit" type="primary" :loading="loading" @click="handleOk"
-        >Добавить хранилище</a-button
+        >Добавить пользователя</a-button
       >
     </template>
     <a-space v-if="isLoading" class="w-[250px]" direction="vertical">
