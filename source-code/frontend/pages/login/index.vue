@@ -31,11 +31,7 @@
 
       if (authStore.isAuth) {
         await authStore.profile()
-        if (authStore.getUser.company_id) {
-          await router.push(RoutesNames.RECORDS)
-        } else {
-          await router.push(RoutesNames.WORKSPACE_PERSONAL)
-        }
+        await router.push(RoutesNames.RECORDS)
 
         notification.success({
           message: 'Удачная авторизация',
