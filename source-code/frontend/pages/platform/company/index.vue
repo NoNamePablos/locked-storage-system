@@ -68,7 +68,7 @@
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {}
       )
-      .then(() => router.push({ path: '/platform/' }))
+      .then(() => router.push({ path: '/platform/records' }))
   }
 </script>
 

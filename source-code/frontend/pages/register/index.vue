@@ -42,7 +42,7 @@
       if (authStore.isAuth) {
         await authStore.profile()
         if (values.typeRegister === 'company') {
-          await router.push(RoutesNames.RECORDS)
+          await router.push(RoutesNames.PLATFORM_COMPANY)
         } else {
           await router.push(RoutesNames.PLATFORM)
         }
