@@ -12,6 +12,7 @@
   import TypeView from '~/components/TypeView/TypeView.vue'
   import clusterRepository from '~/services/repository/clusterRepository'
   import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
+  import ClusterCard from '~/components/Cluster/ClusterCard.vue'
 
   definePageMeta({
     layout: 'platform-layout'
@@ -104,6 +105,18 @@
         isLoadingRecord.value = false
       }
     }
+    if (type === 'open') {
+      isLoadingRecord.value = true
+      isEditingRecord.value = true
+      try {
+        await fetchRecordsById(id)
+        openModal.value = true
+      } catch (e) {
+        console.log(e)
+      } finally {
+        isLoadingRecord.value = false
+      }
+    }
   }
 
   const serch = ref('')
@@ -146,21 +159,22 @@
         @search="serchRecords($event)"
       />
       <a-layout-content class="mt-6 px-4">
-        <empty
-          v-if="recordsList && recordsList.length === 0"
-          title="Сейчас кластеры пусты"
-          button-title="Добавить кластер"
-        />
+        <empty v-if="recordsList && recordsList.length === 0" title="Сейчас нет записей" />
         <a-skeleton v-if="isLoading" />
         <type-view
           v-else
           :items="recordsList"
           :type-view="typeOfView"
           button-text="Добавить пароль"
+          :empty="recordsList && recordsList.length === 0"
           @add="open()"
         >
           <template #card="{ item }">
-            <records-card :item="item" @edit="openRecordsModal($event, 'edit')" />
+            <records-card
+              :item="item"
+              @open="openRecordsModal($event, 'open')"
+              @edit="openRecordsModal($event, 'edit')"
+            />
           </template>
         </type-view>
       </a-layout-content>

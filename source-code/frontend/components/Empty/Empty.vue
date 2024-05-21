@@ -28,7 +28,6 @@
       <template #description>
         <span>{{ title }}</span>
       </template>
-      <a-button type="primary" @click="trigger()">{{ buttonTitle }}</a-button>
     </a-empty>
   </div>
 </template>

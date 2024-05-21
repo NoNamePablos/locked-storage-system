@@ -9,10 +9,11 @@ const personalRepository = {
     const response = $http.post('/api/auth/login', params)
     return response
   },
-  register: (params: IUserLogin) => {
+  register: async (params: IUserLogin) => {
     const { $http } = useNuxtApp()
-    const { data } = $http.post('/api/auth/register', params)
-    return data
+    const response = await $http.post('/api/auth/register', params)
+    console.log(response)
+    return response.data
   },
   refresh: () => {
     const { $http } = useNuxtApp()

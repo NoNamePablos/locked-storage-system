@@ -7,9 +7,12 @@
     items: unknown[]
     typeView: ECardsView
     buttonText: string
+    empty?: boolean
   }
 
-  const props = defineProps<IProps>()
+  const props = withDefaults(defineProps<IProps>(), {
+    empty: false
+  })
   const { typeView, items } = toRefs(props)
   const itemsList = ref([])
 
@@ -45,7 +48,7 @@
       <slot name="card" :item="item" />
     </div>
   </div>
-  <add-button :title="buttonText" @click="emits('add')" />
+  <add-button v-if="!empty" :title="buttonText" @click="emits('add')" />
 </template>
 
 <style scoped></style>

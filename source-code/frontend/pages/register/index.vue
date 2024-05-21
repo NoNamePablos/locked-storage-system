@@ -42,7 +42,7 @@
       if (authStore.isAuth) {
         await authStore.profile()
         if (values.typeRegister === 'company') {
-          await router.push(RoutesNames.PLATFORM_COMPANY)
+          await router.push(RoutesNames.RECORDS)
         } else {
           await router.push(RoutesNames.PLATFORM)
         }
@@ -54,9 +54,8 @@
     } catch (error) {
       handleError(error)
       notification.error({
-        message: 'Notification Title',
-        description:
-          'This is the content of the notification. This is the content of the notification. This is the content of the notification.'
+        message: 'Ошибка авторизации',
+        description: 'Невалиданые данные'
       })
     }
   }

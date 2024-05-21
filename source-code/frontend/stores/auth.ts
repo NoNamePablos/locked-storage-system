@@ -48,6 +48,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async register(params) {
       const response = await personalRepository.register(params)
+      console.log('fsdfsda: ', response)
       const newToken = response.token.original.access_token
       localStorage.setItem(this.authTokenKey, newToken)
       this.isAuth = true

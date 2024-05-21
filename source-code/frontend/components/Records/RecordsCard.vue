@@ -23,6 +23,7 @@
 <template>
   <div
     class="relative p-4 rounded border border-solid border-gray-400 flex items-center gap-4 hover:shadow transition-all cursor-pointer"
+    @click="emits('open', item.id)"
   >
     <div>
       <img :src="getFavicon(item.site)" class="w-[64px] h-[64px] object-contain" />
