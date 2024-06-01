@@ -131,9 +131,9 @@
       isLoadingCluster.value = false
     }
     /*setTimeout(() => {
-      loadingCluster.value = false
-      handleCloseClusterModal()
-    }, 2000)*/
+    loadingCluster.value = false
+    handleCloseClusterModal()
+  }, 2000)*/
   }
 
   const isLoadingCluster = ref(false)
@@ -171,7 +171,7 @@
 
 <template>
   <div class="h-full">
-    <platform-header class="mt-4" title="Личное хранилище">
+    <platform-header class="mt-4" title="Хранилища">
       <template #right>
         <a-button
           type="primary"
@@ -191,8 +191,8 @@
       <a-layout-content class="mt-6 px-4">
         <empty
           v-if="!clustersList.length"
-          title="Oooopsss... Добавьте хранилище"
-          button-title="Добавить хранилище"
+          title="Сейчас кластеры пусты ( "
+          button-title="Добавить кластер"
           @trigger="handleOpenClusterModal()"
         />
         <type-view
@@ -228,7 +228,7 @@
           @close="closeAuthModal()"
           @submit="handleOk2($event)"
         />
-        <cluster-modal
+        <cluster-company-modal
           :open="createClusterModal"
           :is-editing="isEditingRecord"
           :is-loading="isLoadingCluster"

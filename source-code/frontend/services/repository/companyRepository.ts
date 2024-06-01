@@ -26,6 +26,11 @@ const companyRepository = {
     })
     return response.data.data
   },
+  fetchUserById: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.get('/api/company/current-user', params)
+    return response.data.data
+  },
   registerUser: async (params: unknown) => {
     const { $http } = useNuxtApp()
     const response = $http.post('/api/auth/register', params)

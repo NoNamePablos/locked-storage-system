@@ -21,36 +21,48 @@
   const { user } = storeToRefs(authStore)
 
   const collapsed = ref<boolean>(false)
-  const selectedKeys = ref<string[]>(['1'])
 
   const visible = ref<boolean>(false)
 
-  const value = ref(['ru'])
-  const options = ref([
-    {
-      value: 'ru',
-      icon: '🇷🇺'
-    },
-    {
-      value: 'en',
-      icon: '🇬🇧'
-    }
-  ])
+  const companyNav = ref({
+    to: RoutesNames.WORKSPACE_COMPANY,
+    title: 'Компания',
+    permission: PermissionsType.ALL,
+    icon: h(DatabaseOutlined),
+    subMenu: [
+      {
+        id: 1,
+        to: RoutesNames.COMPANY_CLUSTER,
+        title: 'Пространство компании',
+        permission: PermissionsType.ALL,
+        icon: h(UserOutlined)
+      },
+      {
+        id: 2,
+        to: RoutesNames.COMPANY_ROLES,
+        title: 'Роли',
+        permission: PermissionsType.ALL,
+        icon: h(UserOutlined),
+        isOwner: true
+      },
+      {
+        id: 3,
+        to: RoutesNames.WORKSPACE_COMPANY,
+        title: 'Пользователи',
+        permission: PermissionsType.ALL,
+        icon: h(DatabaseOutlined),
+        isOwner: true
+      }
+    ]
+  })
+
+  const computedComapnyOwner = computed(() => {
+    return companyNav.value.subMenu.filter(item => item.isOwner)
+  })
 
   const platrformNav = ref([
     {
-      to: RoutesNames.WORKSPACE_COMPANY,
-      title: 'Пользователи',
-      permission: PermissionsType.ALL,
-      icon: h(DatabaseOutlined)
-    },
-    {
-      to: RoutesNames.WORKSPACE_USERS,
-      title: 'Пользователи',
-      permission: PermissionsType.ALL,
-      icon: h(UserOutlined)
-    },
-    {
+      id: 12,
       to: RoutesNames.RECORDS,
       title: 'Мое пространство',
       permission: PermissionsType.ALL,
@@ -58,14 +70,9 @@
     }
   ])
 
-  const typeOfAccount = ref('Компания')
-
-  console.log(user.value)
-
   const logout = () => {
-    console.log('clicked')
     Modal.confirm({
-      title: 'Do you Want to delete these items?',
+      title: 'Вы точно хотите выйти?',
       icon: h(ExclamationCircleOutlined),
       onOk() {
         authStore.logout()
@@ -74,10 +81,6 @@
       onCancel() {}
     })
   }
-
-  watch(value, val => {
-    console.log(`selected:`, val)
-  })
 </script>
 
 <template>
@@ -106,7 +109,34 @@
         class="pt-4 border-solid border-transparent border-t-gray-200 border-0 border-t-[1px] h-full border-r-[1px] border-r-gray-200"
       >
         <a-menu mode="inline" style="border: none">
-          <a-menu-item v-for="(nav, idx) in platrformNav" :key="idx">
+          <a-sub-menu key="sub1">
+            <template #title>
+              <span>
+                <component :is="companyNav.icon" />
+                <span v-if="!collapsed">{{ companyNav.title }}</span>
+              </span>
+            </template>
+
+            <template v-for="nav in computedComapnyOwner">
+              <a-menu-item v-if="nav.isOwner" :key="nav.id">
+                <nuxt-link :to="nav.to">
+                  <component :is="nav.icon" />
+                  <span>{{ nav.title }}</span>
+                </nuxt-link>
+              </a-menu-item>
+            </template>
+
+            <template v-for="nav in companyNav.subMenu">
+              <!--       nav.isOwner && user.companyId       -->
+              <a-menu-item v-if="!nav.isOwner" :key="nav.id">
+                <nuxt-link :to="nav.to">
+                  <component :is="nav.icon" />
+                  <span>{{ nav.title }}</span>
+                </nuxt-link>
+              </a-menu-item>
+            </template>
+          </a-sub-menu>
+          <a-menu-item v-for="nav in platrformNav" :key="nav.id">
             <nuxt-link :to="nav.to">
               <component :is="nav.icon" />
               <span>{{ nav.title }}</span>
@@ -116,23 +146,8 @@
       </div>
     </a-layout-sider>
     <a-layout>
-      <header class="h-[48px] flex bg-white px-8 justify-between">
-        <div class="flex items-center gap-4">
-          <div class="w-[60px]">
-            <a-select
-              v-model:value="value"
-              option-label-prop="icon"
-              :options="options"
-              class="w-full"
-            >
-              <template #option="{ value: val, icon }">
-                <span role="img" :aria-label="val">{{ icon }}</span>
-              </template>
-            </a-select>
-          </div>
-        </div>
-        <div class="flex gap-8 items-center">
-          <div v-if="user?.companyId">{{ typeOfAccount }}</div>
+      <header class="h-[48px] flex bg-white px-8">
+        <div class="flex gap-8 items-center ml-auto">
           <a-popover v-model:open="visible" trigger="click">
             <template #content>
               <a-menu style="border: none" :selectable="false">

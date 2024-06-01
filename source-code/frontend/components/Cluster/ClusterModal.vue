@@ -247,10 +247,6 @@
           >
         </a-flex>
       </a-flex>
-      <a-flex vertical>
-        <div class="mb-2 font-bold">Доступ для сотрудников</div>
-        <cluster-users-select />
-      </a-flex>
       <leak-password-form v-if="isCheckLeaksPassword" ref="leaksFormRef" class="my-4" />
       <generate-password-form v-if="isGeneratePassword" ref="generateFormRef" class="my-4" />
     </a-form>

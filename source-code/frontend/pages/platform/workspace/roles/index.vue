@@ -28,12 +28,12 @@
     }
   }
 
-  const fetchUsers = async () => {
+  const fetchRoles = async () => {
     isLoading.value = true
     try {
-      const response = await companyRepository.users(userStore.getUser.owner.id)
-      console.log(response)
-      users.value = response.users
+      const response = await roleRepository.list(userStore.getUser.owner.id)
+      users.value = response
+      console.log('roles: ', users.value)
     } catch (e) {
       console.log(e)
     } finally {
@@ -45,29 +45,18 @@
     await userStore.profile()
     await fetchCompany()
     await fetchRoles()
-    await fetchUsers()
   })
 
   const columns = [
     {
-      name: 'ID',
+      name: 'id',
       dataIndex: 'id',
       key: 'id'
     },
     {
-      name: 'Имя',
-      dataIndex: 'name',
-      key: 'name'
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email'
-    },
-    {
-      title: 'Роль',
-      key: 'role',
-      dataIndex: 'role'
+      name: 'Роль',
+      dataIndex: 'role',
+      key: 'role'
     },
     {
       title: 'Действия',
@@ -78,23 +67,12 @@
   const isOpenModal = ref(false)
   const isEditUser = ref(false)
   const isLoadingUser = ref(false)
-  const editUserObject = ref(null)
-  const roles = ref([])
+  const editUser = ref(null)
 
-  const addUser = async data => {
+  const addRole = async data => {
     try {
-      console.log(data)
       close()
-      await fetchUsers()
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const fetchRoles = async () => {
-    try {
-      const response = await roleRepository.list(userStore.getUser.owner.id)
-      roles.value = response
+      await fetchRoles()
     } catch (e) {
       console.log(e)
     }
@@ -103,50 +81,21 @@
   const close = () => {
     isOpenModal.value = false
     isEditUser.value = false
-    editUserObject.value = null
-  }
-
-  const fetchUserById = async (id: number) => {
-    isLoadingUser.value = true
-    try {
-      return await companyRepository.fetchUserById({
-        params: {
-          company_id: userStore.getUser.owner.id,
-          user_id: id
-        }
-      })
-    } catch (e) {
-      console.log(e)
-    }
-    isLoadingUser.value = false
-  }
-
-  const editUser = async (id: number) => {
-    try {
-      const response = await fetchUserById(id)
-      console.log(response)
-      /*if (response) {
-        isOpenModal.value = false
-        isEditUser.value = false
-        editUser.value = null
-      }*/
-    } catch (e) {
-      console.log(e)
-    }
+    editUser.value = null
   }
 
   const open = () => {
     isOpenModal.value = true
   }
 
-  const onDelete = async user => {
+  const onDelete = async role => {
     Modal.confirm({
-      title: `Вы точно хотите удалить пользователя ${user.name}?`,
+      title: `Вы точно хотите удалить пользователя ${role.role}?`,
       icon: h(ExclamationCircleOutlined),
       async onOk() {
         try {
-          await deleteUser(user.id)
-          await fetchUsers()
+          await deleteRole(role.id)
+          await fetchRoles()
         } catch (e) {
           console.log(e)
         }
@@ -155,14 +104,13 @@
     })
   }
 
-  const deleteUser = async (id: number) => {
+  const deleteRole = async (id: number) => {
     try {
       const addUserRequest = {
-        company_id: userStore.getUser.owner.id,
-        user_id: id
+        role_id: id
       }
-      const response = await companyRepository.deleteUser(addUserRequest)
-      await fetchUsers()
+      const response = await roleRepository.delete(addUserRequest)
+      await fetchRoles()
     } catch (e) {
       console.log(e)
     }
@@ -171,54 +119,20 @@
   const search = ref('')
 
   const onSearch = async (data: string) => {
-    isLoading.value = true
     try {
       console.log(data)
     } catch (e) {
       console.log(e)
     }
-    isLoading.value = false
   }
-
-  const selectedValue = ref(0)
-
-  const handleChange = async (value: number) => {
-    isLoading.value = true
-    try {
-      selectedValue.value = value
-      if (value !== 0) {
-        users.value = await roleRepository.search(userStore.getUser.owner.id, value)
-      } else {
-        await fetchUsers()
-      }
-    } catch (e) {
-      console.log(e)
-    }
-    isLoading.value = false
-  }
-
-  const computedRoles = computed(() => {
-    const arr = roles.value.map(item => ({
-      label: item.role,
-      value: item.id
-    }))
-
-    return [
-      {
-        label: 'Все',
-        value: 0
-      },
-      ...arr
-    ]
-  })
 </script>
 
 <template>
   <div class="h-full">
-    <platform-header class="mt-4" :title="`Компания ${company?.name ?? ''}`">
+    <platform-header class="mt-4" title="Роли">
       <template #right>
         <a-button type="primary" size="middle" :icon="h(PlusOutlined)" @click="open()"
-          >Добавить пользователя</a-button
+          >Добавить роль</a-button
         >
       </template>
     </platform-header>
@@ -241,42 +155,32 @@
             </a-input>
           </div>
         </div>
-        <div class="flex gap-2 items-center">
-          <span>Сортировка</span>
-          <a-select
-            v-model:value="selectedValue"
-            style="width: 100px"
-            :options="computedRoles"
-            @change="handleChange($event)"
-          />
-        </div>
       </div>
       <a-table :columns="columns" :data-source="users">
         <template #headerCell="{ column }">
-          <template v-if="column.key === 'name'">
-            <span> Имя </span>
-          </template>
           <template v-if="column.key === 'id'">
             <span> ID </span>
+          </template>
+          <template v-if="column.key === 'role'">
+            <span> Роль </span>
           </template>
         </template>
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
-            <a-button type="link" @click="editUser(record.id)">Редактировать</a-button>
+            <a-button type="link" @click="deleteRole(record)">Редактировать</a-button>
           </template>
         </template>
       </a-table>
     </div>
-    <company-modal
+    <roles-modal
       :open="isOpenModal"
       :is-editing="isEditUser"
       :is-loading="isLoadingUser"
-      :roles="roles"
-      :title="isEditUser ? 'Радактировать пользователя' : 'Добавление пользователя'"
-      :item="editUserObject"
+      :title="isEditUser ? 'Радактировать роль' : 'Добавление роль'"
+      :item="editUser"
       @close="close()"
-      @confirm="addUser($event)"
+      @confirm="addRole($event)"
     />
   </div>
 </template>

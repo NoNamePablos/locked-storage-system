@@ -8,5 +8,7 @@ export const enum RoutesNames {
   REGISTER = '/register',
   LOGIN = '/login',
   RECORDS = '/platform/records',
-  WORKSPACE_USERS = '/platform/users'
+  WORKSPACE_USERS = '/platform/users',
+  COMPANY_CLUSTER = '/platform/company-cluster/',
+  COMPANY_ROLES = '/platform/workspace/roles'
 }

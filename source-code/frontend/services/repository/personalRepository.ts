@@ -15,6 +15,12 @@ const personalRepository = {
     console.log(response)
     return response.data
   },
+  checkPassword: async (params: string) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.get(`/api/password?password=${params}`)
+    console.log('check response: ', response.data)
+    return response.data
+  },
   refresh: () => {
     const { $http } = useNuxtApp()
     return $http.post('/api/auth/refresh')

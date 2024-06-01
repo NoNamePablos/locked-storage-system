@@ -7,9 +7,6 @@
   import GeneratePasswordForm from '~/components/Forms/GeneratePasswordForm.vue'
   import type { IUser } from '~/services/models/user'
   import clusterRepository from '~/services/repository/clusterRepository'
-  import companyRepository from '~/services/repository/companyRepository'
-  import personalRepository from '~/services/repository/personalRepository'
-  import roleRepository from '~/services/repository/roleRepository'
 
   const loading = ref<boolean>(false)
 
@@ -21,18 +18,17 @@
     isLoading?: boolean
     item?: ICluster | unknown
     title?: string
-    roles: unknown[]
   }
 
   const props = withDefaults(defineProps<IProps>(), {
     isEditing: false,
     isLoading: false,
-    title: 'Добавление пользователя',
+    title: 'Добавление хранилища',
     item: () => ({})
   })
 
   const { copy } = useClipboard()
-  const { open, isEditing, isLoading, item, roles } = toRefs(props)
+  const { open, isEditing, isLoading, item } = toRefs(props)
 
   const emits = defineEmits<{
     (e: 'close'): void
@@ -47,22 +43,19 @@
       const validate = await clusterModal.value?.validateFields()
       if (validate && !validate.errorFields) {
         const request = {
+          user_id: userStore.getUser.id,
           password: formState.password,
-          name: formState.username,
-          email: formState.email,
-          confirm_password: formState.password,
-          role: 'user'
+          name: formState.name,
+          ...(isEditing.value && {
+            new_password: formState.new_password,
+            cluster_id: item.value?.id
+          })
         }
-        const registerUser = await companyRepository.registerUser(request)
-        const addUserRequest = {
-          company_id: userStore.getUser.owner.id,
-          user_id: registerUser.data.user.id
-        }
-        const response = await companyRepository.addUser(addUserRequest)
-        await roleRepository.addRoleToUser({
-          role_id: formState.role,
-          user_id: registerUser.data.user.id
-        })
+
+        console.log(request)
+
+        const method = isEditing.value ? clusterRepository.update : clusterRepository.create
+        const response = await method(request)
         emits('confirm', response)
       }
     } catch (e) {
@@ -72,36 +65,45 @@
     }
   }
 
+  const deleteCluster = async () => {
+    try {
+      const response = await clusterRepository.delete(item.value?.id)
+      console.log(response)
+      handleCancel()
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   const handleCancel = () => {
     emits('close')
   }
 
   interface FormState {
-    username: string
-    email: string
+    name: string
     password: string
-    role: number | null
+    new_password?: string
+    users: IUser[] | null
   }
-
-  const formState = reactive<FormState>({
-    username: '',
-    email: '',
-    password: '',
-    role: null
-  })
-
   const modal = ref(null)
   const leaksFormRef = ref(null)
   const generateFormRef = ref(null)
 
+  const formState = reactive<FormState>({
+    name: '',
+    password: '',
+    new_password: '',
+    users: null
+  })
+
   watch(
     () => item.value,
     newValue => {
-      console.log(newValue)
       if (isEditing.value && newValue) {
-        formState.username = newValue?.username ?? ''
-        formState.email = newValue?.email ?? ''
+        formState.name = newValue?.name ?? ''
         formState.password = newValue?.password ?? ''
+        formState.new_password = ''
+        formState.users = newValue?.users ?? null
       }
     },
     {
@@ -113,9 +115,10 @@
     () => open.value,
     newVal => {
       if (newVal) {
-        formState.username = ''
-        formState.email = ''
+        formState.name = ''
         formState.password = ''
+        formState.users = null
+        formState.new_password = ''
       }
       if (!newVal) {
         clusterModal.value.resetFields()
@@ -148,21 +151,6 @@
       message.error('Ошибка копирования')
     }
   }
-
-  const handleChange = (value: number) => {
-    console.log(`selected ${value}`)
-    formState.role = value
-  }
-  const filterOption = (input: string, option: any) => {
-    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-  }
-
-  const computedRoles = computed(() => {
-    return roles.value.map(item => ({
-      label: item.role,
-      value: item.id
-    }))
-  })
 </script>
 
 <template>
@@ -173,11 +161,11 @@
     </template>
     <template #footer>
       <a-flex v-if="isEditing" justify="space-between" wrap="wrap">
-        <a-button type="link" danger>Удалить пользователя</a-button>
-        <a-button type="primary">Сохранить</a-button>
+        <a-button type="link" danger @click="deleteCluster()">Удалить хранилище</a-button>
+        <a-button type="primary" @click="handleOk()">Сохранить</a-button>
       </a-flex>
       <a-button v-else key="submit" type="primary" :loading="loading" @click="handleOk"
-        >Добавить пользователя</a-button
+        >Добавить хранилище</a-button
       >
     </template>
     <a-space v-if="isLoading" class="w-[250px]" direction="vertical">
@@ -205,43 +193,23 @@
       autocomplete="off"
     >
       <a-form-item
-        name="username"
+        name="name"
         class="w-[340px]"
-        :rules="[{ required: true, message: 'Введите имя пользователя' }]"
+        :rules="[{ required: true, message: 'Введите название хранилища' }]"
       >
         <a-input
-          v-model:value="formState.username"
+          v-model:value="formState.name"
           class="text-gray-400"
-          placeholder="Имя пользователя"
+          placeholder="Название хранилища"
         >
           <template #prefix>
             <home :size="20" color="currentColor" />
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item
-        name="email"
-        :rules="{ required: true, type: 'email', message: 'Please input your email!' }"
-      >
-        <a-input v-model:value="formState.email" placeholder="E-mail">
-          <template #prefix>
-            <mail-outlined />
-          </template>
-        </a-input>
-      </a-form-item>
-      <a-form-item name="role">
-        <a-select
-          v-model:value="formState.role"
-          show-search
-          placeholder="Выберите роль"
-          :options="computedRoles"
-          :filter-option="filterOption"
-          @change="handleChange"
-        ></a-select>
-      </a-form-item>
       <a-flex wrap="wrap" :gap="4">
         <a-form-item
-          class="w-[340px]"
+          :class="isEditing ? 'w-full' : 'w-[340px]'"
           name="password"
           :rules="[{ required: true, message: 'Введите пароль' }]"
         >
@@ -249,6 +217,21 @@
             v-model:value="formState.password"
             class="text-gray-400"
             placeholder="Введите пароль"
+          >
+            <template #prefix>
+              <lock-keyhole :size="20" color="currentColor" />
+            </template>
+          </a-input-password>
+        </a-form-item>
+        <a-form-item
+          v-if="isEditing"
+          :class="isEditing ? 'w-full' : 'w-[340px]'"
+          name="new_password"
+        >
+          <a-input-password
+            v-model:value="formState.new_password"
+            class="text-gray-400"
+            placeholder="Введите новый пароль"
           >
             <template #prefix>
               <lock-keyhole :size="20" color="currentColor" />
@@ -263,15 +246,10 @@
             >Генерировать</a-button
           >
         </a-flex>
-
-        <a-button
-          v-else
-          type="primary"
-          class="flex-grow"
-          ghost
-          @click="copyText(formState.password)"
-          >Скопировать</a-button
-        >
+      </a-flex>
+      <a-flex vertical>
+        <div class="mb-2 font-bold">Доступ для сотрудников</div>
+        <cluster-users-select />
       </a-flex>
       <leak-password-form v-if="isCheckLeaksPassword" ref="leaksFormRef" class="my-4" />
       <generate-password-form v-if="isGeneratePassword" ref="generateFormRef" class="my-4" />
