@@ -60,7 +60,7 @@
     } catch (e) {
       console.log(e)
     } finally {
-      loading.value = true
+      loading.value = false
     }
   }
 

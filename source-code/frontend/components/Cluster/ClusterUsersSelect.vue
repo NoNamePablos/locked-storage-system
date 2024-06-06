@@ -1,56 +1,90 @@
 <script lang="ts" setup>
-  import { reactive, watch } from 'vue'
-  import { debounce } from 'lodash-es'
-  let lastFetchId = 0
+  import { reactive, ref } from 'vue'
+  import { Home } from 'lucide-vue-next'
+  import clusterRepository from '~/services/repository/clusterRepository'
 
-  const state = reactive({
-    data: [],
-    value: [],
-    fetching: false
+  interface Props {
+    users?: unknown[]
+    isLoading?: boolean
+  }
+
+  const props = withDefaults(defineProps<Props>(), {
+    isLoading: false,
+    users: () => []
   })
 
-  const fetchUser = debounce(value => {
-    console.log('fetching user', value)
-    lastFetchId += 1
-    const fetchId = lastFetchId
-    state.data = []
-    state.fetching = true
-    fetch('https://randomuser.me/api/?results=5')
-      .then(response => response.json())
-      .then(body => {
-        if (fetchId !== lastFetchId) {
-          // for fetch callback order
-          return
-        }
-        const data = body.results.map(user => ({
-          label: `${user.name.first} ${user.name.last}`,
-          value: user.login.username
-        }))
-        state.data = data
-        state.fetching = false
-      })
-  }, 300)
+  const { users, isLoading } = toRefs(props)
 
-  watch(state.value, () => {
-    state.data = []
-    state.fetching = false
+  interface FormState {
+    user_id: number | null
+    is_redactor: boolean
+    is_reader: boolean
+  }
+
+  interface Data extends FormState {
+    name: string
+  }
+
+  const formState = reactive<FormState>({
+    user_id: null,
+    is_redactor: false,
+    is_reader: true
   })
+
+  interface Emits {
+    (event: 'confirm', data: Data): void
+  }
+
+  const emit = defineEmits<Emits>()
+  const modal = ref(null)
+  const computedUsers = computed(() => {
+    console.log(users.value)
+    return (
+      users.value.map(item => ({
+        label: item.name,
+        value: item.id
+      })) ?? []
+    )
+  })
+
+  const filterOption = (input: string, option: any) => {
+    return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  }
+
+  const handleChange = (value: number) => {
+    console.log(`selected ${value}`)
+    formState.user_id = value
+  }
+
+  const handleOk = async () => {
+    const validate = await modal.value?.validateFields()
+    if (validate && !validate.errorFields) {
+      const user = users.value.find(item => item.id === formState.user_id)
+      console.log('confirm: ', { ...formState, name: user.name })
+      emit('confirm', { ...formState, name: user.name })
+    }
+  }
 </script>
 
 <template>
-  <a-select
-    v-model:value="state.value"
-    mode="multiple"
-    label-in-value
-    placeholder="Выбрать сотрудника"
-    style="width: 100%"
-    :filter-option="false"
-    :not-found-content="state.fetching ? undefined : null"
-    :options="state.data"
-    @search="fetchUser"
-  >
-    <template v-if="state.fetching" #notFoundContent>
-      <a-spin size="small" />
-    </template>
-  </a-select>
+  <a-form ref="modal" :model="formState" name="basic" autocomplete="off">
+    <a-form-item name="user_id">
+      <a-select
+        v-model:value="formState.user_id"
+        show-search
+        placeholder="Выбрать сотрудника"
+        style="width: 100%"
+        :filter-option="filterOption"
+        :options="computedUsers"
+        @change="handleChange"
+      />
+    </a-form-item>
+    <a-form-item label="Редактирование" name="is_redactor">
+      <a-switch v-model:checked="formState.is_redactor" />
+    </a-form-item>
+    <a-form-item label="Просмотр" name="is_reader">
+      <a-switch v-model:checked="formState.is_reader" disabled />
+    </a-form-item>
+    <a-button type="primary" @click="handleOk()">Сохранить</a-button>
+  </a-form>
 </template>

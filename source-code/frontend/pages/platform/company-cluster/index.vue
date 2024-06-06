@@ -3,19 +3,16 @@
   import { PlusOutlined } from '@ant-design/icons-vue'
   import { ref } from 'vue'
   import Empty from '~/components/Empty/Empty.vue'
-  import CreateCluster from '~/components/Cluster/CreateCluster.vue'
-  import { mockCluster, mockClusterById } from '~/mock/clusters'
   import AuthCluster from '~/components/Cluster/AuthCluster.vue'
   import UsersModalCluster from '~/components/Cluster/UsersModalCluster.vue'
   import { RecordsHeader } from '#components'
   import { useTypeOfView } from '~/services/composables'
   import { StorageKeys } from '~/services/constants/StorageKeys'
   import ClusterCard from '~/components/Cluster/ClusterCard.vue'
-  import ClusterModal from '~/components/Cluster/ClusterModal.vue'
   import TypeView from '~/components/TypeView/TypeView.vue'
-  import { mockRecordById } from '~/mock/records'
   import clusterRepository from '~/services/repository/clusterRepository'
-  import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
+  import companyClusterRepository from '~/services/repository/companyClusterRepository'
+  import companyRepository from '~/services/repository/companyRepository'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -64,10 +61,13 @@
   const fetchClusters = async () => {
     isLoadingCluster.value = true
     try {
+      /*Чекнуть от лица пользователя компании*/
       const request = {
-        user_id: userStore.getUser.id
+        company_id: userStore.getUser.owner.id
       }
-      const response = await clusterRepository.list(request)
+      const response = await companyClusterRepository.list({
+        company_id: userStore.getUser.owner.id
+      })
       clustersList.value = response
 
       console.log(clustersList.value)
@@ -104,7 +104,7 @@
         recordEditItem.value = data
       }
       if (type === 'open') {
-        await router.push({ path: `/platform/records/${data.id}` })
+        await router.push({ path: `/platform/company-cluster/${data.id}` })
       }
     } catch (e) {
       console.log(e)

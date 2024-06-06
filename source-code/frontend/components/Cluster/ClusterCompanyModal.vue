@@ -7,6 +7,8 @@
   import GeneratePasswordForm from '~/components/Forms/GeneratePasswordForm.vue'
   import type { IUser } from '~/services/models/user'
   import clusterRepository from '~/services/repository/clusterRepository'
+  import companyRepository from '~/services/repository/companyRepository'
+  import ClustersUsersList from '~/components/Cluster/ClustersUsersList.vue'
 
   const loading = ref<boolean>(false)
 
@@ -43,9 +45,9 @@
       const validate = await clusterModal.value?.validateFields()
       if (validate && !validate.errorFields) {
         const request = {
-          user_id: userStore.getUser.id,
           password: formState.password,
           name: formState.name,
+          company_id: userStore.getUser.owner.id,
           ...(isEditing.value && {
             new_password: formState.new_password,
             cluster_id: item.value?.id
@@ -151,6 +153,43 @@
       message.error('Ошибка копирования')
     }
   }
+
+  const usersIsLoading = ref(false)
+  const usersList = ref([])
+
+  const fetchUsers = async () => {
+    usersIsLoading.value = true
+    try {
+      const response = await companyRepository.users(userStore.getUser.owner.id)
+      usersList.value = response.users
+    } catch (e) {
+      console.log(e)
+    } finally {
+      usersIsLoading.value = false
+    }
+  }
+
+  const usersClustersList = ref([])
+
+  const addUserToClusterList = data => {
+    usersClustersList.value.push(data)
+  }
+
+  const onChangeUsersCluster = data => {
+    const findUser = usersClustersList.value.find(item => item.user_id === data.record.user_id)
+    if (findUser) {
+      findUser[data.key] = !findUser[data.key]
+    }
+  }
+
+  const onDeleteUsersCluster = data => {
+    usersClustersList.value = usersClustersList.value.filter(item => item.user_id !== data.user_id)
+  }
+
+  onMounted(async () => {
+    await userStore.profile()
+    await fetchUsers()
+  })
 </script>
 
 <template>
@@ -249,7 +288,17 @@
       </a-flex>
       <a-flex vertical>
         <div class="mb-2 font-bold">Доступ для сотрудников</div>
-        <cluster-users-select />
+        <clusters-users-list
+          v-if="usersClustersList.length"
+          :users="usersClustersList"
+          @change-user="onChangeUsersCluster"
+          @delete="onDeleteUsersCluster"
+        />
+        <cluster-users-select
+          :users="usersList"
+          :is-loading="usersIsLoading"
+          @confirm="addUserToClusterList($event)"
+        />
       </a-flex>
       <leak-password-form v-if="isCheckLeaksPassword" ref="leaksFormRef" class="my-4" />
       <generate-password-form v-if="isGeneratePassword" ref="generateFormRef" class="my-4" />
