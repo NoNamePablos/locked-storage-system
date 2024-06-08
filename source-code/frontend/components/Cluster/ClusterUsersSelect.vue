@@ -19,6 +19,7 @@
     user_id: number | null
     is_redactor: boolean
     is_reader: boolean
+    is_inviter: boolean
   }
 
   interface Data extends FormState {
@@ -28,7 +29,8 @@
   const formState = reactive<FormState>({
     user_id: null,
     is_redactor: false,
-    is_reader: true
+    is_reader: true,
+    is_inviter: false
   })
 
   interface Emits {

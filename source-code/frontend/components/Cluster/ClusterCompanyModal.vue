@@ -57,7 +57,21 @@
         console.log(request)
 
         const method = isEditing.value ? clusterRepository.update : clusterRepository.create
+        const methodUser = isEditing.value
+          ? companyRepository.storeUserToCluster
+          : companyRepository.storeUserToCluster
         const response = await method(request)
+        console.log(response)
+        if (usersClustersList.value.length) {
+          for (const user of usersClustersList.value) {
+            const req = {
+              ...user,
+              cluster_id: response.id
+            }
+            await methodUser(req)
+          }
+        }
+        console.log(usersClustersList.value)
         emits('confirm', response)
       }
     } catch (e) {

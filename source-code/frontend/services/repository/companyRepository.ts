@@ -45,6 +45,11 @@ const companyRepository = {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/company/user', params)
     return response.data.data
+  },
+  storeUserToCluster: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/company-cluster', params)
+    return response.data.data
   }
 }
 export default companyRepository
