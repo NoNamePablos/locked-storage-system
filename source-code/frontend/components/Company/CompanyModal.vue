@@ -10,6 +10,7 @@
   import companyRepository from '~/services/repository/companyRepository'
   import personalRepository from '~/services/repository/personalRepository'
   import roleRepository from '~/services/repository/roleRepository'
+  import { message } from 'ant-design-vue'
 
   const loading = ref<boolean>(false)
 
@@ -54,19 +55,23 @@
           role: 'user'
         }
         const registerUser = await companyRepository.registerUser(request)
-        const addUserRequest = {
-          company_id: userStore.getUser.owner.id,
-          user_id: registerUser.data.user.id
+        if (!registerUser) {
+          message.error(`Пользователь уже зарегистрирован!`)
+        } else {
+          const addUserRequest = {
+            company_id: userStore.getUser.owner.id,
+            user_id: registerUser?.data?.user?.id ?? null
+          }
+          const response = await companyRepository.addUser(addUserRequest)
+          await roleRepository.addRoleToUser({
+            role_id: formState.role,
+            user_id: registerUser.data.user.id
+          })
+          emits('confirm', response)
         }
-        const response = await companyRepository.addUser(addUserRequest)
-        await roleRepository.addRoleToUser({
-          role_id: formState.role,
-          user_id: registerUser.data.user.id
-        })
-        emits('confirm', response)
       }
-    } catch (e) {
-      console.log(e)
+    } catch (error) {
+      message.error(`Непредвиденная ошибка`)
     } finally {
       loading.value = false
     }
@@ -221,7 +226,7 @@
       </a-form-item>
       <a-form-item
         name="email"
-        :rules="{ required: true, type: 'email', message: 'Please input your email!' }"
+        :rules="{ required: true, type: 'email', message: 'Введите E-mail!' }"
       >
         <a-input v-model:value="formState.email" placeholder="E-mail">
           <template #prefix>
@@ -229,7 +234,7 @@
           </template>
         </a-input>
       </a-form-item>
-      <a-form-item name="role">
+      <a-form-item name="role" :rules="{ required: true, message: 'Выберите роль' }">
         <a-select
           v-model:value="formState.role"
           show-search

@@ -75,7 +75,7 @@
     <a-form ref="modalAuth" layout="vertical" :model="formState" name="basic" autocomplete="off">
       <a-form-item
         name="password"
-        :rules="[{ required: true, message: 'Пожалуйста введите пароль от кластера' }]"
+        :rules="[{ required: true, message: 'Пожалуйста введите пароль от хранилища' }]"
       >
         <a-input-password v-model:value="formState.password" />
       </a-form-item>

@@ -20,18 +20,12 @@
         <span class="text-[24px] font-bold uppercase">PassVolt</span>
       </nuxt-link>
       <a-flex v-if="!isMobile" align="center" class="gap-4">
-        <nuxt-link class="text-blue-900" :to="{ path: '/', hash: '#features' }">Features</nuxt-link>
-        <nuxt-link class="text-blue-900" :to="{ path: '/', hash: '#choose' }"
-          >Why Choose us?</nuxt-link
+        <nuxt-link class="text-blue-900" :to="{ path: '/', hash: '#features' }"
+          >Возможности</nuxt-link
         >
-      </a-flex>
-      <a-flex gap="small">
-        <a-tooltip v-if="!isMobile" title="войти в аккаунт" :color="tooltipColor">
-          <nuxt-link to="/login">
-            <a-button> Sign In </a-button>
-          </nuxt-link>
-        </a-tooltip>
-        <div v-else>X</div>
+        <nuxt-link class="text-blue-900" :to="{ path: '/', hash: '#choose' }"
+          >Почему выбирают нас?</nuxt-link
+        >
       </a-flex>
     </a-flex>
   </div>

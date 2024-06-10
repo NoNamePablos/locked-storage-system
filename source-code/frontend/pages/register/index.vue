@@ -88,7 +88,7 @@
           </a-form-item>
           <a-form-item
             name="username"
-            :rules="[{ required: true, message: 'Please input your username!' }]"
+            :rules="[{ required: true, message: 'Пожалуйста введите ваше имя!' }]"
           >
             <a-input v-model:value="formState.username" placeholder="Имя пользователя">
               <template #prefix>
@@ -98,7 +98,7 @@
           </a-form-item>
           <a-form-item
             name="email"
-            :rules="{ required: true, type: 'email', message: 'Please input your email!' }"
+            :rules="{ required: true, type: 'email', message: 'Пожалуйста введите ваш E-mail!' }"
           >
             <a-input v-model:value="formState.email" placeholder="E-mail">
               <template #prefix>
@@ -108,7 +108,7 @@
           </a-form-item>
           <a-form-item
             name="password"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
+            :rules="[{ required: true, message: 'Пожалуйста введите пароль!' }]"
           >
             <a-input-password v-model:value="formState.password" placeholder="Пароль">
               <template #prefix>
@@ -119,11 +119,11 @@
           <a-form-item
             name="repeatPassword"
             :rules="[
-              { required: true, message: 'Please input your password!' },
+              { required: true, message: 'Пожалуйста повторите пароль!' },
               {
                 validator: async (rule, value) => {
                   if (value !== formState.password) {
-                    throw new Error('The passwords do not match')
+                    throw new Error('Пароли не совпадают')
                   }
                 },
                 trigger: 'blur'

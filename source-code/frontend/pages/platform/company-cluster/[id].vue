@@ -143,8 +143,8 @@
 
 <template>
   <div class="h-full">
-    <back-button class="mt-4" name="Кластеры" route="/platform/records" />
-    <platform-header title="Записи кластера">
+    <back-button class="mt-4" name="Хранилища" route="/platform/company-cluster/" />
+    <platform-header title="Записи хранилища">
       <template #right>
         <a-button type="primary" size="middle" :icon="h(PlusOutlined)" @click="open()"
           >Добавить пароль</a-button
@@ -158,7 +158,7 @@
         @change-view="changeTypeOfView($event)"
         @search="serchRecords($event)"
       />
-      <a-layout-content class="mt-6 px-4">
+      <a-layout-content class="mt-6 px-2 sm:px-4">
         <empty v-if="recordsList && recordsList.length === 0" title="Сейчас нет записей" />
         <a-skeleton v-if="isLoading" />
         <type-view

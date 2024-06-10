@@ -14,7 +14,7 @@ const companyClusterRepository = {
   },
   create: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/clusters/store', params)
+    const response = await $http.post('/api/company-cluster/create', params)
     return response.data.data
   },
   update: async (params: unknown) => {

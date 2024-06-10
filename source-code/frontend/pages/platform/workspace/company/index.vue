@@ -48,32 +48,34 @@
     await fetchUsers()
   })
 
-  const columns = [
-    {
-      name: 'ID',
-      dataIndex: 'id',
-      key: 'id'
-    },
-    {
-      name: 'Имя',
-      dataIndex: 'name',
-      key: 'name'
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email'
-    },
-    {
-      title: 'Роль',
-      key: 'role',
-      dataIndex: 'role'
-    },
-    {
-      title: 'Действия',
-      key: 'action'
-    }
-  ]
+  const computedHeaders = computed(() => {
+    return [
+      {
+        name: 'ID',
+        dataIndex: 'id',
+        key: 'id'
+      },
+      {
+        name: 'Имя',
+        dataIndex: 'name',
+        key: 'name'
+      },
+      {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email'
+      },
+      {
+        title: 'Роль',
+        key: 'company_role',
+        dataIndex: 'company_role'
+      },
+      {
+        title: 'Действия',
+        key: 'action'
+      }
+    ]
+  })
 
   const isOpenModal = ref(false)
   const isEditUser = ref(false)
@@ -251,7 +253,7 @@
           />
         </div>
       </div>
-      <a-table :columns="columns" :data-source="users">
+      <a-table :columns="computedHeaders" :data-source="users">
         <template #headerCell="{ column }">
           <template v-if="column.key === 'name'">
             <span> Имя </span>
@@ -261,6 +263,9 @@
           </template>
         </template>
         <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'company_role'">
+            {{ record.company_role ?? 'Роль не задана' }}
+          </template>
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
             <a-button type="link" @click="editUser(record.id)">Редактировать</a-button>

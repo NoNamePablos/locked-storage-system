@@ -191,8 +191,8 @@
       <a-layout-content class="mt-6 px-4">
         <empty
           v-if="!clustersList.length"
-          title="Сейчас кластеры пусты ( "
-          button-title="Добавить кластер"
+          title="Сейчас нет харнилищ ( "
+          button-title="Добавить хранилище"
           @trigger="handleOpenClusterModal()"
         />
         <type-view
@@ -211,7 +211,7 @@
           </template>
         </type-view>
         <users-modal-cluster
-          modal-title="Пользователи кластера"
+          modal-title="Пользователи хранилища"
           class="max-w-[600px]"
           :loading="userModalLoading"
           :open="false"

@@ -10,17 +10,18 @@
         <span
           class="text-gray-400 my-3 flex items-center justify-center font-medium uppercase tracking-wider"
         >
-          Why choose us
+          Почему выбриют именно нас
         </span>
         <h2
           class="block w-full bg-gradient-to-b from-white to-gray-400 bg-clip-text font-bold text-transparent text-3xl sm:text-4xl"
         >
-          Use your passwords easy
+          Легко используйте свои пароли
         </h2>
         <p
           class="mx-auto my-4 w-full max-w-xl bg-transparent text-center font-medium leading-relaxed tracking-wide text-gray-400"
         >
-          Our service will make it easy to use your passwords wherever and whenever you need them.
+          Наш сервис упростит использование ваших паролей везде и в любое время, когда они вам
+          понадобятся.
         </p>
       </div>
 
@@ -54,10 +55,10 @@
               <line x1="17" y1="17" x2="17" y2="17.01"></line>
             </svg>
           </div>
-          <h3 class="mt-6 text-gray-400">Customizable</h3>
+          <h3 class="mt-6 text-gray-400">Настраиваемый</h3>
           <p class="my-4 mb-0 font-normal leading-relaxed tracking-wide text-gray-400">
-            Tailor your landing page's look and feel, from the color scheme to the font size, to the
-            design of the page.
+            Адаптируйте внешний вид вашей целевой страницы, от цветовой гаммы до размера шрифта, к
+            дизайну страницы.
           </p>
         </div>
 
@@ -87,10 +88,10 @@
               <polyline points="13 3 13 10 19 10 11 21 11 14 5 14 13 3"></polyline>
             </svg>
           </div>
-          <h3 class="mt-6 text-gray-400">Fast Performance</h3>
+          <h3 class="mt-6 text-gray-400">Быстрая производительность</h3>
           <p class="my-4 mb-0 font-normal leading-relaxed tracking-wide text-gray-400">
-            We build our templates for speed in mind, for super-fast load times so your customers
-            never waver.
+            Мы разрабатываем наш сервис с учетом скорости и сверхбыстрого времени отклика, чтобы
+            наши пользователи никогда не сомневались.
           </p>
         </div>
 
@@ -125,10 +126,10 @@
               <line x1="16" y1="17" x2="14.5" y2="18.5"></line>
             </svg>
           </div>
-          <h3 class="mt-6 text-gray-400">Fully Featured</h3>
+          <h3 class="mt-6 text-gray-400">Полнофункциональный</h3>
           <p class="my-4 mb-0 font-normal leading-relaxed tracking-wide text-gray-400">
-            Everything you need to succeed and launch your landing page, right out of the box. No
-            need to install anything else.
+            Все, что вам нужно для успешного использования системы. Больше ничего устанавливать не
+            нужно.
           </p>
         </div>
       </div>

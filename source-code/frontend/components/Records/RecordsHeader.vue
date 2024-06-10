@@ -29,7 +29,7 @@
 
 <template>
   <div
-    class="mt-4 pb-6 px-4 flex w-full items-center flex-wrap justify-between border-solid border-transparent border-b-gray-200 border-0 border-b-[1px]"
+    class="mt-4 pb-6 px-2 sm:px-4 flex w-full items-center justify-between border-solid border-transparent border-b-gray-200 border-0 border-b-[1px]"
   >
     <div class="max-w-[400px] mt-4 w-full">
       <div class="border-solid border-0 border-b-2 border-gray-400">

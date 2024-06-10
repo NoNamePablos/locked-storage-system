@@ -84,7 +84,7 @@
   const authModalId = ref<string | number>('')
   const openAuthModal = (id: number, type: string) => {
     authModal.value = true
-    clusterName.value = `Авторизация в кластере`
+    clusterName.value = `Авторизация в хранилище`
     authCluster.value.typeOfAuth = type
     authCluster.value.clusterId = id
   }

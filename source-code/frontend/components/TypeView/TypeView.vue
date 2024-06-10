@@ -29,7 +29,7 @@
   const computedClasses = computed(() => {
     const base = 'gap-4'
     if (typeView.value === ECardsView.CARDS) {
-      return base + ' grid grid-cols-4'
+      return base + ' grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
     }
     if (typeView.value === ECardsView.ROWS) {
       return base + ' grid grid-cols-1'

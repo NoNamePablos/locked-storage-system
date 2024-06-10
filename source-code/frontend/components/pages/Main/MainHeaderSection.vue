@@ -37,22 +37,21 @@
     <div class="relative z-20 mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
         <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-          Security-first, password manager for
-          <span class="text-blue-600">teams & businesses</span>
+          Безопасность - прежде всего, менеджер паролей для
+          <span class="text-blue-600">команд & бизнеса</span>
         </h1>
         <h2 class="mt-6 text-lg leading-8 text-gray-600">
-          Store and manage all of your passwords from one place. Don`t remember hundreds of
-          passwords.
+          Храните все свои пароли и управляйте ими в одном месте. Не запоминайте сотни паролей.
           <span
             class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
-            >Just remember one</span
+            >Просто запомни одно</span
           >
         </h2>
         <div class="mt-10 flex items-center justify-center gap-x-6">
           <nuxt-link
             class="isomorphic-link isomorphic-link--internal inline-flex items-center no-underline justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             to="/login"
-            >Sign in
+            >Войти
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4"

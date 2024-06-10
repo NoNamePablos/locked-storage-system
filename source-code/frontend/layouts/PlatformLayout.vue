@@ -81,6 +81,13 @@
       onCancel() {}
     })
   }
+
+  const settingsStore = useSettingsStore()
+  const { isMobile } = storeToRefs(settingsStore)
+
+  onMounted(() => {
+    collapsed.value = isMobile.value
+  })
 </script>
 
 <template>

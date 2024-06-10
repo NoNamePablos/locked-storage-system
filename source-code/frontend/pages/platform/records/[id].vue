@@ -143,8 +143,8 @@
 
 <template>
   <div class="h-full">
-    <back-button class="mt-4" name="Кластеры" route="/platform/records" />
-    <platform-header title="Записи кластера">
+    <back-button class="mt-4" name="Все хранилища" route="/platform/records" />
+    <platform-header title="Записи хранилища">
       <template #right>
         <a-button type="primary" size="middle" :icon="h(PlusOutlined)" @click="open()"
           >Добавить пароль</a-button

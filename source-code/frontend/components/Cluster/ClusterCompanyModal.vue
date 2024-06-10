@@ -9,6 +9,7 @@
   import clusterRepository from '~/services/repository/clusterRepository'
   import companyRepository from '~/services/repository/companyRepository'
   import ClustersUsersList from '~/components/Cluster/ClustersUsersList.vue'
+  import companyClusterRepository from '~/services/repository/companyClusterRepository'
 
   const loading = ref<boolean>(false)
 
@@ -56,7 +57,9 @@
 
         console.log(request)
 
-        const method = isEditing.value ? clusterRepository.update : clusterRepository.create
+        const method = isEditing.value
+          ? companyClusterRepository.update
+          : companyClusterRepository.create
         const methodUser = isEditing.value
           ? companyRepository.storeUserToCluster
           : companyRepository.storeUserToCluster

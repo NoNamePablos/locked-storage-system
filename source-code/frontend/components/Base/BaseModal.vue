@@ -39,8 +39,10 @@
     @ok="handleOk"
   >
     <template #footer>
-      <a-button key="back" @click="handleCancel">Return</a-button>
-      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">Submit</a-button>
+      <a-button key="back" @click="handleCancel">Отмена</a-button>
+      <a-button key="submit" type="primary" :loading="loading" @click="handleOk"
+        >Подтвердить</a-button
+      >
     </template>
     <div class="py-4"><slot /></div>
   </a-modal>

@@ -33,7 +33,7 @@ const companyRepository = {
   },
   registerUser: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = $http.post('/api/auth/register', params)
+    const response = await $http.post('/api/auth/register', params)
     return response
   },
   deleteUser: async (params: unknown) => {

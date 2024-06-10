@@ -8,17 +8,17 @@
           <h2
             class="text-base font-semibold leading-7 text-blue-100 bg-blue-600 px-3 rounded-lg uppercase mb-4 lg:mb-8"
           >
-            Key Features
+            Ключевые Возможности
           </h2>
           <h1
             class="lg:text-7xl text-4xl md:text-5xl font-bold tracking-tight text-gray-900 text-center"
           >
-            What makes
+            Что отличает
             <span
               class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
               >PassVolt</span
             >
-            different&nbsp;?
+            от других&nbsp;?
           </h1>
         </div>
         <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -46,18 +46,18 @@
                     ></path>
                   </svg>
                 </div>
-                All your
+                Все твои
                 <span class="font-semibold text-blue-100 bg-blue-600 px-3 py-2 rounded-lg uppercase"
-                  >passwords</span
+                  >пароли</span
                 >
-                are here
+                здесь
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600">
-                Store and manage all of your passwords from one place. Don`t remember hundreds of
-                passwords.
+                Храните все свои пароли и управляйте ими в одном месте. Не запоминайте сотни
+                паролей.
                 <span
                   class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-blue-800 to-gray-900"
-                  >Just remember one</span
+                  >Просто запомни одно</span
                 >
               </dd>
             </div>
@@ -80,11 +80,12 @@
                     ></path>
                   </svg>
                 </div>
-                Data Security
+                Безопасность данных
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600">
-                Ensure the highest level of data security with our robust encryption and privacy
-                features. Protect your sensitive information with confidence.
+                Обеспечьте высочайший уровень безопасности данных с помощью наших надежных функций
+                шифрования и обеспечения конфиденциальности. Надежно защищайте свою конфиденциальную
+                информацию.
               </dd>
             </div>
             <div class="relative pl-16">
@@ -108,15 +109,15 @@
                     ></path>
                   </svg>
                 </div>
-                Generate
+                Генрация
                 <span class="font-semibold text-blue-100 bg-blue-600 px-3 py-2 rounded-lg uppercase"
-                  >secure</span
+                  >Защищенных</span
                 >
-                passwords
+                паролей
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600">
-                Stop using unsecure passwords for your online accounts. Level up with us. get the
-                most secure and difficult-to-crack passwords.
+                Прекратите использовать небезопасные пароли для своих онлайн-аккаунтов. Повышайте
+                свой уровень вместе с нами. получите самые надежные и трудноразрушимые пароли.
               </dd>
             </div>
             <div class="relative pl-16">
@@ -145,13 +146,13 @@
                   </svg>
                 </div>
                 <span class="font-semibold text-blue-100 bg-blue-600 px-3 py-2 rounded-lg uppercase"
-                  >Protect</span
+                  >Защитите</span
                 >
-                your data from leaks
+                ваши данные от утечек
               </dt>
               <dd class="mt-2 text-base leading-7 text-gray-600">
-                We will check your password for leaks.If your passwords is found in one of the
-                databases.We Recommended that your change it immediately.
+                Мы проверим ваш пароль на предмет утечек.Если ваш пароль найден в одной из баз
+                данных.Мы рекомендуем вам немедленно изменить его.
               </dd>
             </div>
           </dl>

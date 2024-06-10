@@ -41,9 +41,8 @@
     } catch (error) {
       handleError(error)
       notification.error({
-        message: 'Notification Title',
-        description:
-          'This is the content of the notification. This is the content of the notification. This is the content of the notification.'
+        message: 'Ошибка',
+        description: 'Произошла ошибка'
       })
     }
   }
@@ -57,7 +56,7 @@
           <a-typography-title class="py-10" :level="2">Войти</a-typography-title>
           <a-form-item
             name="email"
-            :rules="{ required: true, type: 'email', message: 'Please input your email!' }"
+            :rules="{ required: true, type: 'email', message: 'Пожалуйста введите ваш E-mail!' }"
           >
             <a-input v-model:value="formState.email" placeholder="E-mail">
               <template #prefix>
@@ -67,7 +66,7 @@
           </a-form-item>
           <a-form-item
             name="password"
-            :rules="[{ required: true, message: 'Please input your password!' }]"
+            :rules="[{ required: true, message: 'Пожалуйста введите пароль!' }]"
           >
             <a-input-password v-model:value="formState.password" placeholder="Password">
               <template #prefix>
@@ -76,9 +75,6 @@
             </a-input-password>
           </a-form-item>
           <a-flex justify="space-between" align="center">
-            <a-form-item name="remember">
-              <a-checkbox v-model:checked="formState.remember">Запомнить меня</a-checkbox>
-            </a-form-item>
             <a-form-item>
               <a-button
                 html-type="submit"
