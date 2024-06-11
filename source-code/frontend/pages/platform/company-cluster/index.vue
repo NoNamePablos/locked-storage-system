@@ -63,10 +63,10 @@
     try {
       /*Чекнуть от лица пользователя компании*/
       const request = {
-        company_id: userStore.getUser.owner.id
+        company_id: userStore.getUser.owner?.id ?? userStore.user.company.id
       }
       const response = await companyClusterRepository.list({
-        company_id: userStore.getUser.owner.id
+        company_id: userStore.getUser.owner?.id ?? userStore.user.company.id
       })
       clustersList.value = response
 
@@ -104,6 +104,7 @@
         recordEditItem.value = data
       }
       if (type === 'open') {
+        console.log(data)
         await router.push({ path: `/platform/company-cluster/${data.id}` })
       }
     } catch (e) {
@@ -210,6 +211,7 @@
           <template #card="{ item }">
             <cluster-card
               :item="item"
+              :is-owner="isOwner"
               @edit="handleOpenClusterModal($event, 'edit')"
               @open="handleOpenClusterModal($event, 'open')"
             />
@@ -234,6 +236,7 @@
           @submit="handleOk2($event)"
         />
         <cluster-company-modal
+          v-if="isOwner"
           :open="createClusterModal"
           :is-editing="isEditingRecord"
           :is-loading="isLoadingCluster"

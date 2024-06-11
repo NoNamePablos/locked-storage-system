@@ -36,6 +36,11 @@ const personalRecordsRepository = {
     })
     return response.data.data
   },
+  findById2: async (id: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.get(`/api/company-cluster/${id}`)
+    return response.data.data
+  },
   search: async (params: unknown) => {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/records/search', params)

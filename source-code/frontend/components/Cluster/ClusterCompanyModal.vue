@@ -48,7 +48,7 @@
         const request = {
           password: formState.password,
           name: formState.name,
-          company_id: userStore.getUser.owner.id,
+          company_id: userStore.getUser.owner.id ?? userStore.user.company.id,
           ...(isEditing.value && {
             new_password: formState.new_password,
             cluster_id: item.value?.id
@@ -177,7 +177,9 @@
   const fetchUsers = async () => {
     usersIsLoading.value = true
     try {
-      const response = await companyRepository.users(userStore.getUser.owner.id)
+      const response = await companyRepository.users(
+        userStore.getUser.owner?.id ?? userStore.user.company.id
+      )
       usersList.value = response.users
     } catch (e) {
       console.log(e)

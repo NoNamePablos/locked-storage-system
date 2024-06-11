@@ -5,6 +5,7 @@
 
   interface IProps {
     item: ICluster
+    isOwner: boolean
   }
 
   const props = defineProps<IProps>()
@@ -26,6 +27,7 @@
       <div class="text-gray-400 font-medium">{{ item.created }}</div>
     </div>
     <div
+      v-if="isOwner"
       class="absolute top-4 right-2 text-gray-400 transition-all hover:text-blue-400"
       @click.stop="emits('edit', item.id)"
     >

@@ -40,7 +40,7 @@
           password: formState.password,
           site: formState.site,
           login: formState.login,
-          title: formState.title,
+          name: formState.name,
           ...(!isEditing.value && {
             cluster_id: +clusterdId.value
           }),
@@ -69,7 +69,7 @@
   }
 
   interface FormState {
-    title: string
+    name: string
     site: string
     login: string
     password: string
@@ -78,7 +78,7 @@
   const leaksFormRef = ref(null)
 
   const formState = reactive<FormState>({
-    title: '',
+    name: '',
     site: '',
     login: '',
     password: ''
@@ -91,7 +91,7 @@
       console.log(isEditing.value)
       if (isEditing.value && newValue) {
         console.log('news: ', newValue)
-        formState.title = newValue?.title ?? ''
+        formState.name = newValue?.name ?? ''
         formState.site = newValue?.site ?? ''
         formState.login = newValue?.login ?? ''
         formState.password = newValue?.password ?? ''

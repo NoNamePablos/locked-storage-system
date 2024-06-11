@@ -205,6 +205,7 @@
           <template #card="{ item }">
             <cluster-card
               :item="item"
+              :is-owner="true"
               @edit="handleOpenClusterModal($event, 'edit')"
               @open="handleOpenClusterModal($event, 'open')"
             />

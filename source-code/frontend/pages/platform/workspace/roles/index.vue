@@ -5,6 +5,7 @@
   import { Search } from 'lucide-vue-next'
   import { h } from 'vue'
   import roleRepository from '~/services/repository/roleRepository'
+  import clusterRepository from '~/services/repository/clusterRepository'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -118,11 +119,38 @@
 
   const search = ref('')
 
-  const onSearch = async (data: string) => {
+  const editRole = async (id: number) => {
+    isLoadingUser.value = true
     try {
-      console.log(data)
+      const response = users.value.find(item => item.id === id)
+      console.log(response)
+      if (response) {
+        isOpenModal.value = true
+        isEditUser.value = true
+        editUser.value = response
+      }
     } catch (e) {
       console.log(e)
+    }
+    isLoadingUser.value = false
+  }
+
+  const onSearch = async data => {
+    isLoadingUser.value = true
+    try {
+      if (!data.length) {
+        await fetchRoles()
+      } else {
+        const response = await roleRepository.searchRoles({
+          find: data
+        })
+        console.log(response)
+        users.value = response
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      isLoadingUser.value = false
     }
   }
 </script>
@@ -168,7 +196,7 @@
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
-            <a-button v-if="false" type="link" @click="deleteRole(record)">Редактировать</a-button>
+            <a-button type="link" @click="editRole(record.id)">Редактировать</a-button>
           </template>
         </template>
       </a-table>

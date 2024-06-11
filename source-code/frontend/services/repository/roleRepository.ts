@@ -15,7 +15,7 @@ const roleRepository = {
   },
   update: async (params: unknown) => {
     const { $http } = useNuxtApp()
-    const response = await $http.post('/api/clusters/update', params)
+    const response = await $http.post('/api/role/update', params)
     return response.data.data
   },
   delete: async params => {
@@ -45,6 +45,11 @@ const roleRepository = {
     const response = await $http.get(
       `/api/role/search-user-by-role?company_id=${companyId}&role_id=${role_id}`
     )
+    return response.data.data
+  },
+  searchRoles: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/role/search', params)
     return response.data.data
   }
 }
