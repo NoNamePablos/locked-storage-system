@@ -104,8 +104,9 @@
     newValue => {
       console.log(newValue)
       if (isEditing.value && newValue) {
-        formState.username = newValue?.username ?? ''
+        formState.username = newValue?.name ?? ''
         formState.email = newValue?.email ?? ''
+        formState.role = roles.value.find(item => item.role === newValue?.company_role).id
         formState.password = newValue?.password ?? ''
       }
     },

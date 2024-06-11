@@ -168,7 +168,7 @@
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
-            <a-button type="link" @click="deleteRole(record)">Редактировать</a-button>
+            <a-button v-if="false" type="link" @click="deleteRole(record)">Редактировать</a-button>
           </template>
         </template>
       </a-table>

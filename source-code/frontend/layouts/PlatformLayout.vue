@@ -18,6 +18,7 @@
   const router = useRouter()
 
   const authStore = useAuthStore()
+
   const { user } = storeToRefs(authStore)
 
   const collapsed = ref<boolean>(false)
@@ -88,6 +89,10 @@
   onMounted(() => {
     collapsed.value = isMobile.value
   })
+
+  const isOwner = computed(() => {
+    return authStore.user && authStore.user.owner
+  })
 </script>
 
 <template>
@@ -125,7 +130,7 @@
             </template>
 
             <template v-for="nav in computedComapnyOwner">
-              <a-menu-item v-if="nav.isOwner" :key="nav.id">
+              <a-menu-item v-if="nav.isOwner && isOwner" :key="nav.id">
                 <nuxt-link :to="nav.to">
                   <component :is="nav.icon" />
                   <span>{{ nav.title }}</span>

@@ -109,7 +109,6 @@
   }
 
   const fetchUserById = async (id: number) => {
-    isLoadingUser.value = true
     try {
       return await companyRepository.fetchUserById({
         params: {
@@ -120,21 +119,22 @@
     } catch (e) {
       console.log(e)
     }
-    isLoadingUser.value = false
   }
 
   const editUser = async (id: number) => {
+    isLoadingUser.value = true
     try {
       const response = await fetchUserById(id)
       console.log(response)
-      /*if (response) {
-        isOpenModal.value = false
-        isEditUser.value = false
-        editUser.value = null
-      }*/
+      if (response) {
+        isOpenModal.value = true
+        isEditUser.value = true
+        editUserObject.value = response
+      }
     } catch (e) {
       console.log(e)
     }
+    isLoadingUser.value = false
   }
 
   const open = () => {
@@ -268,7 +268,7 @@
           </template>
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
-            <a-button type="link" @click="editUser(record.id)">Редактировать</a-button>
+            <a-button v-if="false" type="link" @click="editUser(record.id)">Редактировать</a-button>
           </template>
         </template>
       </a-table>

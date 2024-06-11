@@ -41,7 +41,7 @@
           @change="onSearch($event.target.value)"
         >
           <template #prefix>
-            <search :size="16" color="currentColor" />
+            <Search :size="16" color="currentColor" />
           </template>
         </a-input>
       </div>

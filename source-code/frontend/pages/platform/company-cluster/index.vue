@@ -167,6 +167,10 @@
       isLoadingCluster.value = false
     }
   }
+
+  const isOwner = computed(() => {
+    return userStore.user && userStore.user.owner
+  })
 </script>
 
 <template>
@@ -174,6 +178,7 @@
     <platform-header class="mt-4" title="Хранилища">
       <template #right>
         <a-button
+          v-if="isOwner"
           type="primary"
           size="middle"
           :icon="h(PlusOutlined)"
