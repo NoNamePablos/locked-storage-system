@@ -36,6 +36,11 @@ const companyRepository = {
     const response = await $http.post('/api/auth/register', params)
     return response
   },
+  updateUser: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/users/update', params)
+    return response.data.data
+  },
   deleteUser: async (params: unknown) => {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/company/delete-user', params)
@@ -49,6 +54,11 @@ const companyRepository = {
   storeUserToCluster: async (params: unknown) => {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/company-cluster', params)
+    return response.data.data
+  },
+  searchUsers: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/company/search-user', params)
     return response.data.data
   }
 }

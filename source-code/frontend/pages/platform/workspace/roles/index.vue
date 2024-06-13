@@ -142,7 +142,8 @@
         await fetchRoles()
       } else {
         const response = await roleRepository.searchRoles({
-          find: data
+          find: data,
+          company_id: userStore.getUser.owner.id
         })
         console.log(response)
         users.value = response

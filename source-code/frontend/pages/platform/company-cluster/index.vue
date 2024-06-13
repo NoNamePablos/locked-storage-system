@@ -156,8 +156,9 @@
       if (!data.length) {
         await fetchClusters()
       } else {
-        const response = await clusterRepository.search({
-          find: data
+        const response = await clusterRepository.searchCompany({
+          find: data,
+          company_id: userStore.getUser.owner?.id ?? userStore.user.company.id
         })
         console.log(response)
         clustersList.value = response

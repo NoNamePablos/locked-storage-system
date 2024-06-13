@@ -42,6 +42,11 @@ const clusterRepository = {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/clusters/search', params)
     return response.data.data
+  },
+  searchCompany: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post('/api/clusters/search-company', params)
+    return response.data.data
   }
 }
 export default clusterRepository

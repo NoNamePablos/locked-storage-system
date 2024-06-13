@@ -42,6 +42,29 @@
 
   const clusterModal = ref(null)
 
+  const editUser = async () => {
+    loading.value = true
+    try {
+      const validate = await clusterModal.value?.validateFields()
+      if (validate && !validate.errorFields) {
+        const request = {
+          password: formState.password,
+          confirm_password: formState.confirm_password,
+          name: formState.username,
+          email: formState.email,
+          role_id: formState.role
+        }
+        const response = await companyRepository.updateUser(request)
+        console.log('rest: ', response)
+        emits('confirm', response)
+      }
+    } catch (error) {
+      message.error(`Непредвиденная ошибка`)
+    } finally {
+      loading.value = false
+    }
+  }
+
   const handleOk = async () => {
     loading.value = true
     try {
@@ -86,13 +109,15 @@
     email: string
     password: string
     role: number | null
+    confirm_password?: string
   }
 
   const formState = reactive<FormState>({
     username: '',
     email: '',
     password: '',
-    role: null
+    role: null,
+    confirm_password: ''
   })
 
   const modal = ref(null)
@@ -180,7 +205,7 @@
     <template #footer>
       <a-flex v-if="isEditing" justify="space-between" wrap="wrap">
         <a-button type="link" danger>Удалить пользователя</a-button>
-        <a-button type="primary">Сохранить</a-button>
+        <a-button type="primary" @click="editUser">Сохранить</a-button>
       </a-flex>
       <a-button v-else key="submit" type="primary" :loading="loading" @click="handleOk"
         >Добавить пользователя</a-button
@@ -247,7 +272,7 @@
       </a-form-item>
       <a-flex wrap="wrap" :gap="4">
         <a-form-item
-          class="w-[340px]"
+          :class="isEditing ? 'w-full' : 'w-[340px]'"
           name="password"
           :rules="[{ required: true, message: 'Введите пароль' }]"
         >
@@ -261,7 +286,23 @@
             </template>
           </a-input-password>
         </a-form-item>
-        <a-flex v-if="!isEditing" vertical :gap="4">
+        <a-form-item
+          v-if="isEditing"
+          :class="isEditing ? 'w-full' : 'w-[340px]'"
+          name="confirm_password"
+        >
+          <a-input-password
+            v-model:value="formState.confirm_password"
+            class="text-gray-400"
+            placeholder="Введите новый пароль"
+          >
+            <template #prefix>
+              <lock-keyhole :size="20" color="currentColor" />
+            </template>
+          </a-input-password>
+        </a-form-item>
+
+        <a-flex :gap="4">
           <a-button type="primary" class="flex-grow" ghost @click="toggleLeaksPassword()"
             >Проверить</a-button
           >
@@ -271,7 +312,7 @@
         </a-flex>
 
         <a-button
-          v-else
+          v-if="!isEditing"
           type="primary"
           class="flex-grow"
           ghost

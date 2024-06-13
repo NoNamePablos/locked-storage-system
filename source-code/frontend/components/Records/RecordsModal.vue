@@ -41,6 +41,7 @@
           site: formState.site,
           login: formState.login,
           name: formState.name,
+          title: formState.title,
           ...(!isEditing.value && {
             cluster_id: +clusterdId.value
           }),
@@ -73,6 +74,8 @@
     site: string
     login: string
     password: string
+    title: string
+    confirm_password?: ''
   }
   const modal = ref(null)
   const leaksFormRef = ref(null)
@@ -81,7 +84,9 @@
     name: '',
     site: '',
     login: '',
-    password: ''
+    password: '',
+    confirm_password: '',
+    title: ''
   })
 
   watch(
@@ -91,10 +96,12 @@
       console.log(isEditing.value)
       if (isEditing.value && newValue) {
         console.log('news: ', newValue)
+        formState.title = newValue?.title ?? ''
         formState.name = newValue?.name ?? ''
         formState.site = newValue?.site ?? ''
         formState.login = newValue?.login ?? ''
         formState.password = newValue?.password ?? ''
+        formState.confirm_password = ''
         console.log(formState)
       }
     },

@@ -125,7 +125,6 @@
     isLoadingUser.value = true
     try {
       const response = await fetchUserById(id)
-      console.log(response)
       if (response) {
         isOpenModal.value = true
         isEditUser.value = true
@@ -173,13 +172,23 @@
   const search = ref('')
 
   const onSearch = async (data: string) => {
-    isLoading.value = true
+    isLoadingUser.value = true
     try {
-      console.log(data)
+      if (!data.length) {
+        await fetchUsers()
+      } else {
+        const response = await companyRepository.searchUsers({
+          find: data,
+          company_id: userStore.getUser.owner.id
+        })
+        console.log(response)
+        users.value = response
+      }
     } catch (e) {
       console.log(e)
+    } finally {
+      isLoadingUser.value = false
     }
-    isLoading.value = false
   }
 
   const selectedValue = ref(0)
@@ -268,7 +277,7 @@
           </template>
           <template v-if="column.key === 'action'">
             <a-button type="link" danger @click="onDelete(record)">Удалить</a-button>
-            <a-button disabled type="link" @click="editUser(record.id)">Редактировать</a-button>
+            <a-button type="link" @click="editUser(record.id)">Редактировать</a-button>
           </template>
         </template>
       </a-table>
