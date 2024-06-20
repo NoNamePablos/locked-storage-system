@@ -31,6 +31,22 @@ const companyRepository = {
     const response = await $http.get('/api/company/current-user', params)
     return response.data.data
   },
+
+  fetchUserClusters: async (params: unknown) => {
+    const { $http } = useNuxtApp()
+    console.log(params)
+    const response = await $http.get('/api/company-cluster/users/show', {
+      params: {
+        cluster_id: params?.cluster_id
+      }
+    })
+    return response.data.data
+  },
+  deleteUserFormCluster: async (id: number) => {
+    const { $http } = useNuxtApp()
+    const response = await $http.post(`/api/company-cluster/users/delete/${id}`)
+    return response.data.data
+  },
   registerUser: async (params: unknown) => {
     const { $http } = useNuxtApp()
     const response = await $http.post('/api/auth/register', params)

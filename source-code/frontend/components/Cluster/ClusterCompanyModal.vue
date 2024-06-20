@@ -117,7 +117,7 @@
 
   watch(
     () => item.value,
-    newValue => {
+    async newValue => {
       if (isEditing.value && newValue) {
         formState.name = newValue?.name ?? ''
         formState.password = newValue?.password ?? ''
@@ -132,12 +132,16 @@
 
   watch(
     () => open.value,
-    newVal => {
+    async newVal => {
       if (newVal) {
         formState.name = ''
         formState.password = ''
         formState.users = null
         formState.new_password = ''
+      }
+      if (isEditing.value) {
+        console.log('item od: ', item.value?.id)
+        await fetchClusterUser(item.value?.id)
       }
       if (!newVal) {
         clusterModal.value.resetFields()
@@ -188,6 +192,30 @@
     }
   }
 
+  const fetchClusterUser = async clusterId => {
+    usersIsLoading.value = true
+    try {
+      const response = await companyRepository.fetchUserClusters({
+        cluster_id: clusterId
+      })
+      console.log('rsL ', response)
+      const test = response.reduce((acc, cur) => {
+        acc.push({
+          ...cur.users,
+          delete_id: cur.id,
+          is_reader: !!cur.is_reader,
+          is_redactor: !!cur.is_redactor
+        })
+        return acc
+      }, [])
+      console.log('test: ', test)
+      usersClustersList.value = test
+    } catch (e) {
+      console.log(e)
+    }
+    usersIsLoading.value = false
+  }
+
   const usersClustersList = ref([])
 
   const addUserToClusterList = data => {
@@ -201,8 +229,17 @@
     }
   }
 
-  const onDeleteUsersCluster = data => {
+  const onDeleteUsersCluster = async data => {
     usersClustersList.value = usersClustersList.value.filter(item => item.user_id !== data.user_id)
+    usersIsLoading.value = true
+    try {
+      const response = await companyRepository.deleteUserFormCluster(data.delete_id)
+      await fetchClusterUser(item.value?.id)
+      console.log('delt: ', response)
+    } catch (e) {
+      console.log(e)
+    }
+    usersIsLoading.value = false
   }
 
   onMounted(async () => {
