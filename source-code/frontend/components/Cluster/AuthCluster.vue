@@ -19,12 +19,6 @@
   const fetchRecordsById = async () => {
     isLoading.value = true
     try {
-      console.log({
-        user_id: userStore.getUser.id,
-        password: formState.password,
-        cluster_id: clusterId.value
-      })
-
       const response = await clusterRepository.findById({
         user_id: userStore.getUser.id,
         password: formState.password,

@@ -64,7 +64,7 @@
     message
       .loading('Пожалуйста,подождите..', 2.5)
       .then(
-        () => message.success('Регистрация прошла успешно!', 2.5),
+        () => message.success('Регистрация прошла успешно!', 0.2),
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {}
       )

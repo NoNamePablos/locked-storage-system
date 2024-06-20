@@ -10,7 +10,7 @@ const personalRecordsRepository = {
         cluster_id: params.cluster_id
       }
     })
-    return response.data.data
+    return response.data
   },
   create: async (params: unknown) => {
     const { $http } = useNuxtApp()

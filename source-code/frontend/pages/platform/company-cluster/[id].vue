@@ -37,7 +37,9 @@
         cluster_id: route.params.id
       }
       const response = await personalRecordsRepository.list(request)
-      recordsList.value = response
+      recordsList.value = response.data
+      isRedactor.value = !!response.cluster.is_redactor
+      console.log('is redactor: ', isRedactor.value)
       console.log(recordsList.value)
     } catch (e) {
       console.log(e)
@@ -45,6 +47,8 @@
       isLoading.value = false
     }
   }
+
+  const isRedactor = ref<boolean>(false)
 
   const fetchRecordsById = async (id: number) => {
     isLoading.value = true
@@ -146,7 +150,12 @@
     <back-button class="mt-4" name="Хранилища" route="/platform/company-cluster/" />
     <platform-header title="Записи хранилища">
       <template #right>
-        <a-button type="primary" size="middle" :icon="h(PlusOutlined)" @click="open()"
+        <a-button
+          v-if="isRedactor"
+          type="primary"
+          size="middle"
+          :icon="h(PlusOutlined)"
+          @click="open()"
           >Добавить пароль</a-button
         >
       </template>
@@ -171,6 +180,7 @@
         >
           <template #card="{ item }">
             <records-card
+              :is-redactor="isRedactor"
               :item="item"
               @open="openRecordsModal($event, 'open')"
               @edit="openRecordsModal($event, 'edit')"

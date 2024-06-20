@@ -37,7 +37,7 @@
         cluster_id: route.params.id
       }
       const response = await personalRecordsRepository.list(request)
-      recordsList.value = response
+      recordsList.value = response.data
       console.log(recordsList.value)
     } catch (e) {
       console.log(e)

@@ -5,9 +5,12 @@
 
   interface IProps {
     item: IRecordItem
+    isRedactor?: boolean
   }
 
-  const props = defineProps<IProps>()
+  const props = withDefaults(defineProps<IProps>(), {
+    isRedactor: true
+  })
   const { item } = toRefs(props)
 
   const getFavicon = (url: string) => {
@@ -33,6 +36,7 @@
       <div class="text-gray-400 font-medium">{{ item?.email ?? item?.login ?? '' }}</div>
     </div>
     <div
+      v-if="isRedactor"
       class="absolute top-4 right-2 text-gray-400 transition-all hover:text-blue-400"
       @click.stop="emits('edit', item.id)"
     >

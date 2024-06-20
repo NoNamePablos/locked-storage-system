@@ -13,6 +13,7 @@
   import clusterRepository from '~/services/repository/clusterRepository'
   import companyClusterRepository from '~/services/repository/companyClusterRepository'
   import companyRepository from '~/services/repository/companyRepository'
+  import { message } from 'ant-design-vue'
 
   definePageMeta({
     layout: 'platform-layout',
@@ -97,6 +98,7 @@
   const router = useRouter()
   const handleOk2 = async ({ data, type }) => {
     try {
+      console.log(data)
       closeAuthModal()
       if (type === 'edit') {
         createClusterModal.value = true
@@ -104,8 +106,13 @@
         recordEditItem.value = data
       }
       if (type === 'open') {
-        console.log(data)
-        await router.push({ path: `/platform/company-cluster/${data.id}` })
+        if (data.message !== 'Доступ запрещен') {
+          console.log(123)
+          await router.push({ path: `/platform/company-cluster/${data.id}` })
+        } else {
+          message.error('Доступ запрещен')
+          console.log('Доступ запрещен')
+        }
       }
     } catch (e) {
       console.log(e)
