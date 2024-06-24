@@ -8,10 +8,12 @@
     typeView: ECardsView
     buttonText: string
     empty?: boolean
+    isEditPermission?: boolean
   }
 
   const props = withDefaults(defineProps<IProps>(), {
-    empty: false
+    empty: false,
+    isEditPermission: true
   })
   const { typeView, items } = toRefs(props)
   const itemsList = ref([])
@@ -48,7 +50,7 @@
       <slot name="card" :item="item" />
     </div>
   </div>
-  <add-button v-if="!empty" :title="buttonText" @click="emits('add')" />
+  <add-button v-if="!empty && isEditPermission" :title="buttonText" @click="emits('add')" />
 </template>
 
 <style scoped></style>

@@ -176,6 +176,7 @@
           :type-view="typeOfView"
           button-text="Добавить пароль"
           :empty="recordsList && recordsList.length === 0"
+          :is-edit-permission="isRedactor"
           @add="open()"
         >
           <template #card="{ item }">

@@ -43,7 +43,7 @@
       const validate = await clusterModal.value?.validateFields()
       if (validate && !validate.errorFields) {
         const request = {
-          user_id: userStore.getUser.id,
+          user_id: userStore.user?.id ?? '',
           password: formState.password,
           name: formState.name,
           ...(isEditing.value && {

@@ -3,8 +3,7 @@
   import { Home, Globe, User, LockKeyhole, Info } from 'lucide-vue-next'
   import LeakPasswordForm from '~/components/Forms/LeakPasswordForm.vue'
   import type { IRecordItem } from '~/services/models'
-  import { useClipboard, usePermission } from '@vueuse/core'
-  import clusterRepository from '~/services/repository/clusterRepository'
+  import { useClipboard } from '@vueuse/core'
   import personalRecordsRepository from '~/services/repository/personalRecordsRepository'
 
   const loading = ref<boolean>(false)
@@ -43,9 +42,7 @@
           name: formState.name,
           title: formState.title,
           ...(!isEditing.value && {
-            cluster_id: +clusterdId.value
-          }),
-          ...(isEditing.value && {
+            cluster_id: +clusterdId.value,
             record_id: item.value.id
           })
         }
