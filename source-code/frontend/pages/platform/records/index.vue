@@ -96,6 +96,8 @@
   }
   const router = useRouter()
   const handleOk2 = async ({ data, type }) => {
+    console.log('data: ', data)
+
     try {
       closeAuthModal()
       if (type === 'edit') {

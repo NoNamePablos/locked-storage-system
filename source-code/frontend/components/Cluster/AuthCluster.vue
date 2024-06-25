@@ -2,6 +2,7 @@
   import BaseModal from '~/components/Base/BaseModal.vue'
   import { onUpdated, reactive, useAttrs, toRefs, ref } from 'vue'
   import clusterRepository from '~/services/repository/clusterRepository'
+  import { message } from 'ant-design-vue'
 
   const attrs = useAttrs()
 
@@ -27,6 +28,7 @@
       emits('submit', { data: response, type: type.value })
     } catch (e) {
       console.log(e)
+      message.error('Доступ запрещен')
     } finally {
       isLoading.value = false
     }

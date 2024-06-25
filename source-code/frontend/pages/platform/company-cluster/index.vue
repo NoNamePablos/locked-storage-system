@@ -98,7 +98,7 @@
   const router = useRouter()
   const handleOk2 = async ({ data, type }) => {
     try {
-      console.log(data)
+      console.log('data: ', data)
       closeAuthModal()
       if (type === 'edit') {
         createClusterModal.value = true

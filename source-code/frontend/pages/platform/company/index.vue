@@ -61,14 +61,8 @@
   ]
   const items = steps.map(item => ({ key: item.title, title: item.title }))
   const success = () => {
-    message
-      .loading('Пожалуйста,подождите..', 2.5)
-      .then(
-        () => message.success('Регистрация прошла успешно!', 0.2),
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        () => {}
-      )
-      .then(() => router.push({ path: '/platform/records' }))
+    message.success('Регистрация прошла успешно!', 0.2)
+    router.push({ path: '/platform/records' })
   }
 </script>
 
