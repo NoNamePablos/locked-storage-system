@@ -46,12 +46,16 @@
       const validate = await clusterModal.value?.validateFields()
       if (validate && !validate.errorFields) {
         const request = {
-          password: formState.password,
           name: formState.name,
           company_id: userStore.getUser.owner.id ?? userStore.user.company.id,
+          ...(!isEditing.value && {
+            password: formState.password
+          }),
           ...(isEditing.value && {
             new_password: formState.new_password,
-            cluster_id: item.value?.id
+            new_password_confirm: formState.new_password,
+            cluster_id: item.value?.id,
+            password: formState.password
           })
         }
 
@@ -67,8 +71,10 @@
         console.log(response)
         if (usersClustersList.value.length) {
           for (const user of usersClustersList.value) {
+            console.log('addd user: ', user)
             const req = {
               ...user,
+              user_id: user.id ?? user.user_id,
               cluster_id: response.id
             }
             await methodUser(req)
