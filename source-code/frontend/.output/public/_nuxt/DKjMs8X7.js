@@ -1,1 +1,0 @@
-import{b7 as i,b6 as o,aa as n}from"./DutA6s4s.js";const u=i(e=>{const{authTokenKey:t}=o().public,a=localStorage.getItem(t);if(a&&(e==null?void 0:e.name)==="login")return n("/platform");if(!a&&e.name!=="login")return n("/login")});export{u as default};

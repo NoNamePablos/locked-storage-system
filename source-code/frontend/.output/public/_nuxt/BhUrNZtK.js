@@ -1,1 +1,0 @@
-import{u as r}from"./DqJXAqIy.js";import{ah as u,ac as a,aR as t}from"./DutA6s4s.js";function c(){const e=u({});let s=null;const n=r();return a(()=>{s=n.value.subscribe(o=>{e.value=o})}),t(()=>{n.value.unsubscribe(s)}),e}export{c as u};

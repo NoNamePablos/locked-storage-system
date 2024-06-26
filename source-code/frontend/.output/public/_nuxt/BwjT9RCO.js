@@ -1,1 +1,0 @@
-import{_ as s}from"./DlAUqK2U.js";import{c as o,a as t,af as a,o as c}from"./DutA6s4s.js";const r={},l={class:"h-full"},n={class:"p-20px h-full"};function _(e,f){return c(),o("div",l,[t("div",n,[a(e.$slots,"default")])])}const p=s(r,[["render",_]]);export{p as default};

@@ -1,1 +1,0 @@
-import{_ as e}from"./DlAUqK2U.js";import{R as s}from"./4ITr2vOd.js";import{o,x as c}from"./DutA6s4s.js";const r={};function n(_,a){const t=s;return o(),c(t,{status:"success",title:"Спасибо за регистрацию!","sub-title":"Заполните информацию о компании!"})}const u=e(r,[["render",n]]);export{u as default};
