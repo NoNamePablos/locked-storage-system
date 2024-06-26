@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   css: ['ant-design-vue/dist/reset.css', '~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      apiUrl: 'https://security-diplom.ru',
+      apiUrl: 'https://security-diplom.online',
       authTokenKey: 'JWT_SECRET'
     }
   },
