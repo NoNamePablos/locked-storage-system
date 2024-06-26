@@ -1,1 +1,0 @@
-import{bf as i,be as o,al as n}from"./BJuUlySd.js";const r=i(e=>{const{authTokenKey:t}=o().public,a=localStorage.getItem(t);if(a&&(e==null?void 0:e.name)==="login")return n("/platform");if(!a&&e.name!=="login")return n("/login")});export{r as default};
