@@ -99,7 +99,7 @@
   <a-layout class="h-full">
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible theme="light">
       <div class="h-[48px] p-2 flex justify-between">
-        <nuxt-link to="/platform" class="text-black">
+        <nuxt-link to="/platform/records" class="text-black">
           <a-tooltip title="Вернуть на главную">
             <Logo />
           </a-tooltip>
@@ -163,12 +163,6 @@
           <a-popover v-model:open="visible" trigger="click">
             <template #content>
               <a-menu style="border: none" :selectable="false">
-                <a-menu-item key="1">
-                  <nuxt-link :to="RoutesNames.SETTINGS">
-                    <user-outlined />
-                    <span>Настройки</span>
-                  </nuxt-link>
-                </a-menu-item>
                 <a-menu-item key="3">
                   <div class="flex" @click="logout">
                     <login-outlined />
