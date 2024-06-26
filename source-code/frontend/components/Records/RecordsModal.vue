@@ -41,9 +41,9 @@
           login: formState.login,
           name: formState.name,
           title: formState.title,
+          record_id: item.value.id,
           ...(!isEditing.value && {
-            cluster_id: +clusterdId.value,
-            record_id: item.value.id
+            cluster_id: +clusterdId.value
           })
         }
 
